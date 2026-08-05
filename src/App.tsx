@@ -70,6 +70,15 @@ export default function App() {
     };
   }, []);
 
+  // Fetch recipes from DB
+  const fetchRecipes = async () => {
+    if (!isSupabaseConfigured) return;
+    const cloudRecipes = await fetchRecipesFromSupabase();
+    if (cloudRecipes !== null) {
+      setRecipes(cloudRecipes);
+    }
+  };
+
   // Handlers
   const handleAddRecipe = async (newRecipeData: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => {
     const newRecipe: CoffeeRecipe = {
@@ -79,20 +88,19 @@ export default function App() {
     };
 
     // Send insert request to Supabase DB
-    let isSaved = false;
     if (isSupabaseConfigured) {
-      isSaved = await insertRecipeToSupabase(newRecipe);
-    }
-
-    // Update state directly; or refetch from DB
-    if (isSaved) {
-      const reFetched = await fetchRecipesFromSupabase();
-      if (reFetched) {
-        setRecipes(reFetched);
-        return;
+      const result = await insertRecipeToSupabase(newRecipe);
+      if (result.success) {
+        // 1. 성공 시 DB에서 레시피 목록을 다시 불러옴
+        await fetchRecipes();
+      } else {
+        // 2. 실패 시 alert 및 console.error 출력
+        console.error('Supabase Insert Error:', result.error);
+        alert(`Supabase 데이터베이스 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
       }
+    } else {
+      setRecipes((prev) => [newRecipe, ...prev]);
     }
-    setRecipes((prev) => [newRecipe, ...prev]);
   };
 
   const handleDeleteRecipe = async (id: number) => {

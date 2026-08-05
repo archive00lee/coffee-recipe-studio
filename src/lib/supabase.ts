@@ -90,52 +90,90 @@ export async function fetchRecipesFromSupabase(): Promise<CoffeeRecipe[] | null>
   }
 }
 
-export async function insertRecipeToSupabase(recipe: CoffeeRecipe): Promise<boolean> {
-  if (!supabase) return false;
-  try {
-    const payload = {
-      id: recipe.id,
-      title: recipe.title,
-      brew_method: recipe.brewMethod,
-      brewMethod: recipe.brewMethod,
-      filter_type: recipe.filterType,
-      filterType: recipe.filterType,
-      cap_type: recipe.capType,
-      capType: recipe.capType,
-      orientation: recipe.orientation,
-      bean_amount_grams: recipe.beanAmountGrams,
-      beanAmountGrams: recipe.beanAmountGrams,
-      water_amount_ml: recipe.waterAmountMl,
-      waterAmountMl: recipe.waterAmountMl,
-      ratio_text: recipe.ratioText,
-      ratioText: recipe.ratioText,
-      water_temp_celsius: recipe.waterTempCelsius,
-      waterTempCelsius: recipe.waterTempCelsius,
-      grind_size_microns: recipe.grindSizeMicrons,
-      grindSizeMicrons: recipe.grindSizeMicrons,
-      total_time_seconds: recipe.totalTimeSeconds,
-      totalTimeSeconds: recipe.totalTimeSeconds,
-      agtron_number: recipe.agtronNumber ?? 55,
-      agtronNumber: recipe.agtronNumber ?? 55,
-      roast_level_name: recipe.roastLevelName || '',
-      roastLevelName: recipe.roastLevelName || '',
-      desc: recipe.desc,
-      steps: recipe.steps || [],
-      is_favorite: recipe.isFavorite || false,
-      isFavorite: recipe.isFavorite || false,
-      created_at: recipe.createdAt,
-      createdAt: recipe.createdAt,
-    };
-    const { error } = await supabase.from('recipes').insert([payload]);
-    if (error) {
-      console.warn('Supabase insert recipe error:', error.message);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.warn('Supabase insert recipe exception:', err);
-    return false;
+export async function insertRecipeToSupabase(recipe: CoffeeRecipe): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+
+  // 1st attempt: Standard snake_case column names (most common in Supabase DBs)
+  const snakePayload: Record<string, any> = {
+    id: recipe.id,
+    title: recipe.title,
+    brew_method: recipe.brewMethod,
+    filter_type: recipe.filterType,
+    cap_type: recipe.capType,
+    orientation: recipe.orientation,
+    bean_amount_grams: recipe.beanAmountGrams,
+    water_amount_ml: recipe.waterAmountMl,
+    ratio_text: recipe.ratioText,
+    water_temp_celsius: recipe.waterTempCelsius,
+    grind_size_microns: recipe.grindSizeMicrons,
+    total_time_seconds: recipe.totalTimeSeconds,
+    agtron_number: recipe.agtronNumber ?? 55,
+    roast_level_name: recipe.roastLevelName || '',
+    desc: recipe.desc,
+    steps: recipe.steps || [],
+    is_favorite: recipe.isFavorite || false,
+    created_at: recipe.createdAt,
+  };
+
+  const { error: snakeErr } = await supabase.from('recipes').insert([snakePayload]);
+  if (!snakeErr) {
+    return { success: true };
   }
+
+  // 2nd attempt: camelCase column names matching JS model keys
+  const camelPayload: Record<string, any> = {
+    id: recipe.id,
+    title: recipe.title,
+    brewMethod: recipe.brewMethod,
+    filterType: recipe.filterType,
+    capType: recipe.capType,
+    orientation: recipe.orientation,
+    beanAmountGrams: recipe.beanAmountGrams,
+    waterAmountMl: recipe.waterAmountMl,
+    ratioText: recipe.ratioText,
+    waterTempCelsius: recipe.waterTempCelsius,
+    grindSizeMicrons: recipe.grindSizeMicrons,
+    totalTimeSeconds: recipe.totalTimeSeconds,
+    agtronNumber: recipe.agtronNumber ?? 55,
+    roastLevelName: recipe.roastLevelName || '',
+    desc: recipe.desc,
+    steps: recipe.steps || [],
+    isFavorite: recipe.isFavorite || false,
+    createdAt: recipe.createdAt,
+  };
+
+  const { error: camelErr } = await supabase.from('recipes').insert([camelPayload]);
+  if (!camelErr) {
+    return { success: true };
+  }
+
+  // 3rd attempt: Strip extra new columns if schema table lacks them
+  const fallbackPayload: Record<string, any> = {
+    id: recipe.id,
+    title: recipe.title,
+    brew_method: recipe.brewMethod,
+    filter_type: recipe.filterType,
+    cap_type: recipe.capType,
+    bean_amount_grams: recipe.beanAmountGrams,
+    water_amount_ml: recipe.waterAmountMl,
+    ratio_text: recipe.ratioText,
+    water_temp_celsius: recipe.waterTempCelsius,
+    grind_size_microns: recipe.grindSizeMicrons,
+    total_time_seconds: recipe.totalTimeSeconds,
+    desc: recipe.desc,
+    steps: recipe.steps || [],
+    is_favorite: recipe.isFavorite || false,
+    created_at: recipe.createdAt,
+  };
+
+  const { error: fallbackErr } = await supabase.from('recipes').insert([fallbackPayload]);
+  if (!fallbackErr) {
+    return { success: true };
+  }
+
+  const finalError = snakeErr || camelErr || fallbackErr;
+  console.error('Supabase Insert Error:', finalError);
+  return { success: false, error: finalError };
 }
 
 export async function deleteRecipeFromSupabase(id: number): Promise<boolean> {
