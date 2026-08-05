@@ -11,10 +11,12 @@ import {
   isSupabaseConfigured,
   fetchRecipesFromSupabase,
   insertRecipeToSupabase,
+  updateRecipeInSupabase,
   deleteRecipeFromSupabase,
   toggleFavoriteInSupabase,
   fetchEvaluationsFromSupabase,
   insertEvaluationToSupabase,
+  updateEvaluationInSupabase,
   deleteEvaluationFromSupabase,
 } from './lib/supabase';
 import { Cloud, Database, AlertCircle } from 'lucide-react';
@@ -26,6 +28,10 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation'>('home');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddEvalModalOpen, setIsAddEvalModalOpen] = useState(false);
+
+  const [editingRecipe, setEditingRecipe] = useState<CoffeeRecipe | null>(null);
+  const [editingEvaluation, setEditingEvaluation] = useState<BrewEvaluation | null>(null);
+
   const [selectedRecipeForDetail, setSelectedRecipeForDetail] = useState<CoffeeRecipe | null>(null);
   const [isCloudConnected, setIsCloudConnected] = useState<boolean | null>(null);
 
@@ -88,27 +94,71 @@ export default function App() {
     }
   };
 
-  // Handlers
-  const handleAddRecipe = async (newRecipeData: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => {
-    const newRecipe: CoffeeRecipe = {
-      ...newRecipeData,
-      id: Date.now(),
-      createdAt: new Date().toISOString().split('T')[0],
-    };
+  // Open modals
+  const handleOpenAddRecipeModal = () => {
+    setEditingRecipe(null);
+    setIsAddModalOpen(true);
+  };
 
-    // Send insert request to Supabase DB
-    if (isSupabaseConfigured) {
-      const result = await insertRecipeToSupabase(newRecipe);
-      if (result.success) {
-        // 1. 성공 시 DB에서 레시피 목록을 다시 불러옴
-        await fetchRecipes();
+  const handleOpenEditRecipeModal = (recipe: CoffeeRecipe) => {
+    setEditingRecipe(recipe);
+    setIsAddModalOpen(true);
+  };
+
+  const handleOpenAddEvalModal = () => {
+    setEditingEvaluation(null);
+    setIsAddEvalModalOpen(true);
+  };
+
+  const handleOpenEditEvalModal = (evaluation: BrewEvaluation) => {
+    setEditingEvaluation(evaluation);
+    setIsAddEvalModalOpen(true);
+  };
+
+  // Handlers
+  const handleSaveRecipe = async (recipeData: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => {
+    if (editingRecipe) {
+      // Edit Mode
+      const updatedRecipe: CoffeeRecipe = {
+        ...editingRecipe,
+        ...recipeData,
+      };
+
+      if (isSupabaseConfigured) {
+        const result = await updateRecipeInSupabase(updatedRecipe);
+        if (result.success) {
+          await fetchRecipes();
+        } else {
+          console.error('Supabase Recipe Update Error:', result.error);
+          alert(`레시피 수정 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        }
       } else {
-        // 2. 실패 시 alert 및 console.error 출력
-        console.error('Supabase Insert Error:', result.error);
-        alert(`Supabase 데이터베이스 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        setRecipes((prev) => prev.map((r) => (r.id === updatedRecipe.id ? updatedRecipe : r)));
       }
+
+      if (selectedRecipeForDetail?.id === updatedRecipe.id) {
+        setSelectedRecipeForDetail(updatedRecipe);
+      }
+      setEditingRecipe(null);
     } else {
-      setRecipes((prev) => [newRecipe, ...prev]);
+      // Create Mode
+      const newRecipe: CoffeeRecipe = {
+        ...recipeData,
+        id: Date.now(),
+        createdAt: new Date().toISOString().split('T')[0],
+      };
+
+      if (isSupabaseConfigured) {
+        const result = await insertRecipeToSupabase(newRecipe);
+        if (result.success) {
+          await fetchRecipes();
+        } else {
+          console.error('Supabase Insert Error:', result.error);
+          alert(`Supabase 데이터베이스 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        }
+      } else {
+        setRecipes((prev) => [newRecipe, ...prev]);
+      }
     }
   };
 
@@ -118,7 +168,6 @@ export default function App() {
       setSelectedRecipeForDetail(null);
     }
 
-    // Send delete request to Supabase DB
     if (isSupabaseConfigured) {
       await deleteRecipeFromSupabase(id);
     }
@@ -136,36 +185,55 @@ export default function App() {
       })
     );
 
-    // Send update request to Supabase DB
     if (isSupabaseConfigured) {
       await toggleFavoriteInSupabase(id, nextFavState);
     }
   };
 
-  const handleAddEvaluation = async (newEvalData: Omit<BrewEvaluation, 'id'>) => {
-    const newEval: BrewEvaluation = {
-      ...newEvalData,
-      id: Date.now(),
-    };
+  const handleSaveEvaluation = async (evalData: Omit<BrewEvaluation, 'id'>) => {
+    if (editingEvaluation) {
+      // Edit Mode
+      const updatedEval: BrewEvaluation = {
+        ...editingEvaluation,
+        ...evalData,
+      };
 
-    // Send insert request to Supabase DB
-    if (isSupabaseConfigured) {
-      const result = await insertEvaluationToSupabase(newEval);
-      if (result.success) {
-        await fetchEvaluations();
+      if (isSupabaseConfigured) {
+        const result = await updateEvaluationInSupabase(updatedEval);
+        if (result.success) {
+          await fetchEvaluations();
+        } else {
+          console.error('Supabase Evaluation Update Error:', result.error);
+          alert(`센서리 평가 수정 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        }
       } else {
-        console.error('Supabase Evaluation Insert Error:', result.error);
-        alert(`센서리 평가 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        setEvaluations((prev) => prev.map((e) => (e.id === updatedEval.id ? updatedEval : e)));
       }
+      setEditingEvaluation(null);
     } else {
-      setEvaluations((prev) => [newEval, ...prev]);
+      // Create Mode
+      const newEval: BrewEvaluation = {
+        ...evalData,
+        id: Date.now(),
+      };
+
+      if (isSupabaseConfigured) {
+        const result = await insertEvaluationToSupabase(newEval);
+        if (result.success) {
+          await fetchEvaluations();
+        } else {
+          console.error('Supabase Evaluation Insert Error:', result.error);
+          alert(`센서리 평가 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        }
+      } else {
+        setEvaluations((prev) => [newEval, ...prev]);
+      }
     }
   };
 
   const handleDeleteEvaluation = async (id: number) => {
     setEvaluations((prev) => prev.filter((item) => item.id !== id));
 
-    // Send delete request to Supabase DB
     if (isSupabaseConfigured) {
       await deleteEvaluationFromSupabase(id);
     }
@@ -185,7 +253,7 @@ export default function App() {
         <Header
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          openAddModal={() => setIsAddModalOpen(true)}
+          openAddModal={handleOpenAddRecipeModal}
           recipeCount={recipes.length}
           evaluationCount={evaluations.length}
           favoriteCount={favoriteCount}
@@ -222,10 +290,11 @@ export default function App() {
           {activeTab === 'recipe' && (
             <RecipeSection
               recipes={recipes}
-              openModal={() => setIsAddModalOpen(true)}
+              openModal={handleOpenAddRecipeModal}
               deleteRecipe={handleDeleteRecipe}
               toggleFavorite={handleToggleFavorite}
               onSelectRecipe={(recipe) => setSelectedRecipeForDetail(recipe)}
+              onEditRecipe={handleOpenEditRecipeModal}
             />
           )}
 
@@ -233,9 +302,10 @@ export default function App() {
             <EvaluationSection
               evaluations={evaluations}
               recipes={recipes}
-              openAddModal={() => setIsAddEvalModalOpen(true)}
+              openAddModal={handleOpenAddEvalModal}
               deleteEvaluation={handleDeleteEvaluation}
               onSelectRecipe={(recipe) => setSelectedRecipeForDetail(recipe)}
+              onEditEvaluation={handleOpenEditEvalModal}
             />
           )}
         </main>
@@ -262,21 +332,30 @@ export default function App() {
       <RecipeDetailModal
         recipe={selectedRecipeForDetail}
         onClose={() => setSelectedRecipeForDetail(null)}
+        onEdit={handleOpenEditRecipeModal}
       />
 
       {/* Recipe Form Modal */}
       <RecipeFormModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onSubmit={handleAddRecipe}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingRecipe(null);
+        }}
+        onSubmit={handleSaveRecipe}
+        initialData={editingRecipe}
       />
 
       {/* Evaluation Form Modal */}
       <EvaluationFormModal
         isOpen={isAddEvalModalOpen}
-        onClose={() => setIsAddEvalModalOpen(false)}
+        onClose={() => {
+          setIsAddEvalModalOpen(false);
+          setEditingEvaluation(null);
+        }}
         recipes={recipes}
-        onSubmit={handleAddEvaluation}
+        onSubmit={handleSaveEvaluation}
+        initialData={editingEvaluation}
       />
     </div>
   );

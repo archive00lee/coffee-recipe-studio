@@ -177,6 +177,74 @@ export async function insertRecipeToSupabase(recipe: CoffeeRecipe): Promise<{ su
   return { success: false, error: finalError };
 }
 
+export async function updateRecipeInSupabase(recipe: CoffeeRecipe): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+  try {
+    const snakePayload: Record<string, any> = {
+      title: recipe.title,
+      brew_method: recipe.brewMethod,
+      filter_type: recipe.filterType,
+      cap_type: recipe.capType,
+      orientation: recipe.orientation,
+      bean_amount_grams: recipe.beanAmountGrams,
+      water_amount_ml: recipe.waterAmountMl,
+      ratio_text: recipe.ratioText,
+      water_temp_celsius: recipe.waterTempCelsius,
+      grind_size_microns: recipe.grindSizeMicrons,
+      agtron_number: recipe.agtronNumber ?? 55,
+      roast_level_name: recipe.roastLevelName || '',
+      total_time_seconds: recipe.totalTimeSeconds,
+      desc: recipe.desc,
+      steps: recipe.steps || [],
+      is_favorite: recipe.isFavorite || false,
+    };
+
+    const { error: snakeErr } = await supabase
+      .from('recipes')
+      .update(snakePayload)
+      .eq('id', recipe.id);
+
+    if (!snakeErr) {
+      return { success: true };
+    }
+
+    // Fallback: try camelCase payload
+    const camelPayload: Record<string, any> = {
+      title: recipe.title,
+      brewMethod: recipe.brewMethod,
+      filterType: recipe.filterType,
+      capType: recipe.capType,
+      orientation: recipe.orientation,
+      beanAmountGrams: recipe.beanAmountGrams,
+      waterAmountMl: recipe.waterAmountMl,
+      ratioText: recipe.ratioText,
+      waterTempCelsius: recipe.waterTempCelsius,
+      grindSizeMicrons: recipe.grindSizeMicrons,
+      agtronNumber: recipe.agtronNumber ?? 55,
+      roastLevelName: recipe.roastLevelName || '',
+      totalTimeSeconds: recipe.totalTimeSeconds,
+      desc: recipe.desc,
+      steps: recipe.steps || [],
+      isFavorite: recipe.isFavorite || false,
+    };
+
+    const { error: camelErr } = await supabase
+      .from('recipes')
+      .update(camelPayload)
+      .eq('id', recipe.id);
+
+    if (!camelErr) {
+      return { success: true };
+    }
+
+    console.error('Supabase Update Recipe Error:', snakeErr || camelErr);
+    return { success: false, error: snakeErr || camelErr };
+  } catch (err) {
+    console.error('Supabase Update Recipe Exception:', err);
+    return { success: false, error: err };
+  }
+}
+
 export async function deleteRecipeFromSupabase(id: number): Promise<boolean> {
   if (!supabase) return false;
   try {
@@ -253,6 +321,37 @@ export async function insertEvaluationToSupabase(evaluation: BrewEvaluation): Pr
     return { success: true };
   } catch (err) {
     console.error('Supabase Evaluation Insert Exception:', err);
+    return { success: false, error: err };
+  }
+}
+
+export async function updateEvaluationInSupabase(evaluation: BrewEvaluation): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+  try {
+    const payload = {
+      recipe_id: evaluation.recipeId,
+      recipe_title: evaluation.recipeTitle,
+      brew_method: evaluation.brewMethod,
+      bean_name: evaluation.beanName,
+      roast_level: evaluation.roastLevel,
+      rating: evaluation.rating,
+      acidity: evaluation.acidity,
+      sweetness: evaluation.sweetness,
+      body: evaluation.body,
+      bitterness: evaluation.bitterness,
+      aftertaste: evaluation.aftertaste,
+      tasting_notes: evaluation.tastingNotes || [],
+      eval_date: evaluation.evalDate,
+      memo: evaluation.memo,
+    };
+    const { error } = await supabase.from('evaluations').update(payload).eq('id', evaluation.id);
+    if (error) {
+      console.error('Supabase Evaluation Update Error:', error);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('Supabase Evaluation Update Exception:', err);
     return { success: false, error: err };
   }
 }

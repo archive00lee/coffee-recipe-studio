@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter, Flame, Compass } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter, Flame, Compass, Edit3 } from 'lucide-react';
 import { CoffeeRecipe, BrewStep, FILTER_OPTIONS_MAP, getAgtronRoastLevel } from '../types';
 
 interface RecipeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (recipe: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => void;
+  initialData?: CoffeeRecipe | null;
 }
 
 export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
+  initialData,
 }) => {
   const [title, setTitle] = useState('');
   const [brewMethod, setBrewMethod] = useState<string>('에어로프레스');
@@ -34,6 +36,54 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
     { id: '2', phaseName: '1차 푸어링 (1st Pour)', waterAmountGrams: 150, durationSeconds: 40, description: '중심에서 바깥쪽으로 부드럽게 물을 부어줍니다.' },
     { id: '3', phaseName: '2차 푸어링 (2nd Pour)', waterAmountGrams: 300, durationSeconds: 80, description: '목표 수량 300g까지 채우고 완벽하게 드립을 마칩니다.' }
   ]);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setTitle(initialData.title || '');
+        setBrewMethod(initialData.brewMethod || '에어로프레스');
+        setFilterType(initialData.filterType || (FILTER_OPTIONS_MAP[initialData.brewMethod] || ['기본 1장'])[0]);
+        setCapType(initialData.capType || '기본');
+        setOrientation((initialData.orientation as '정방향' | '역방향') || '정방향');
+        setBeanAmount(initialData.beanAmountGrams || 20);
+        setWaterAmount(initialData.waterAmountMl || 300);
+        setWaterTemp(initialData.waterTempCelsius || 93);
+        setGrindSizeMicrons(initialData.grindSizeMicrons || 800);
+        setAgtronNumber(initialData.agtronNumber ?? 55);
+        setCustomRoastName(initialData.roastLevelName || '');
+        const totalSec = initialData.totalTimeSeconds || 150;
+        setMinutes(Math.floor(totalSec / 60));
+        setSeconds(totalSec % 60);
+        setDesc(initialData.desc || '');
+        if (initialData.steps && initialData.steps.length > 0) {
+          setSteps(initialData.steps);
+        } else {
+          setSteps([]);
+        }
+      } else {
+        // Reset to default
+        setTitle('');
+        setBrewMethod('에어로프레스');
+        setFilterType('기본 1장');
+        setCapType('기본');
+        setOrientation('정방향');
+        setBeanAmount(20);
+        setWaterAmount(300);
+        setWaterTemp(93);
+        setGrindSizeMicrons(800);
+        setAgtronNumber(55);
+        setCustomRoastName('');
+        setMinutes(2);
+        setSeconds(30);
+        setDesc('');
+        setSteps([
+          { id: '1', phaseName: '뜸들이기 (Bloom)', waterAmountGrams: 50, durationSeconds: 30, description: '전체 가루를 고르게 적셔 이산화탄소를 빼냅니다.' },
+          { id: '2', phaseName: '1차 푸어링 (1st Pour)', waterAmountGrams: 150, durationSeconds: 40, description: '중심에서 바깥쪽으로 부드럽게 물을 부어줍니다.' },
+          { id: '3', phaseName: '2차 푸어링 (2nd Pour)', waterAmountGrams: 300, durationSeconds: 80, description: '목표 수량 300g까지 채우고 완벽하게 드립을 마칩니다.' }
+        ]);
+      }
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -109,9 +159,11 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white backdrop-blur-md shadow-md">
-              <Sparkles className="w-4 h-4" />
+              {initialData ? <Edit3 className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
             </div>
-            <h3 className="text-lg font-bold text-white tracking-tight">새 커스텀 레시피 작성</h3>
+            <h3 className="text-lg font-bold text-white tracking-tight">
+              {initialData ? '커스텀 레시피 수정' : '새 커스텀 레시피 작성'}
+            </h3>
           </div>
           <button
             type="button"
@@ -546,7 +598,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               type="submit"
               className="px-6 py-2.5 bg-gradient-to-r from-white to-zinc-200 hover:brightness-110 text-black font-extrabold text-xs rounded-xl shadow-lg transition"
             >
-              레시피 저장
+              {initialData ? '수정사항 저장' : '레시피 저장'}
             </button>
           </div>
         </form>

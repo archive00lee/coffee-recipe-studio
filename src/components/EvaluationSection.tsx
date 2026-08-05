@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ClipboardCheck, Plus, Search, Star, Trash2, 
-  Coffee, Tag, ArrowUpRight, Sparkles
+  Coffee, Tag, ArrowUpRight, Sparkles, Edit3
 } from 'lucide-react';
 import { CoffeeRecipe, BrewEvaluation } from '../types';
 
@@ -11,6 +11,7 @@ interface EvaluationSectionProps {
   openAddModal: () => void;
   deleteEvaluation: (id: number) => void;
   onSelectRecipe: (recipe: CoffeeRecipe) => void;
+  onEditEvaluation: (evaluation: BrewEvaluation) => void;
 }
 
 export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
@@ -19,6 +20,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
   openAddModal,
   deleteEvaluation,
   onSelectRecipe,
+  onEditEvaluation,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRatingFilter, setSelectedRatingFilter] = useState<number>(0);
@@ -164,7 +166,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                     </h3>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {/* Stars */}
                     <div className="flex items-center gap-0.5 bg-black/60 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-md">
                       <Star className="w-3.5 h-3.5 fill-white text-white" />
@@ -172,6 +174,15 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                         {item.rating}
                       </span>
                     </div>
+
+                    {/* Edit button */}
+                    <button
+                      onClick={() => onEditEvaluation(item)}
+                      className="p-1.5 rounded-lg border border-white/10 bg-black/60 text-zinc-300 hover:text-white hover:border-white/30 transition text-xs"
+                      title="평가 수정"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                    </button>
 
                     {/* Delete button */}
                     <button
@@ -181,6 +192,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                           ? 'bg-rose-950/80 border-rose-700 text-rose-300 font-bold'
                           : 'bg-black/60 border-white/10 text-zinc-400 hover:text-rose-400 hover:border-rose-500/30'
                       }`}
+                      title="평가 삭제"
                     >
                       {deletingId === item.id ? '확인' : <Trash2 className="w-3.5 h-3.5" />}
                     </button>

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered, Flame } from 'lucide-react';
+import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered, Flame, Edit3 } from 'lucide-react';
 import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
 
 interface RecipeDetailModalProps {
   recipe: CoffeeRecipe | null;
   onClose: () => void;
+  onEdit?: (recipe: CoffeeRecipe) => void;
 }
 
 export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
   recipe,
   onClose,
+  onEdit,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -192,22 +194,37 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
 
         {/* Footer Actions */}
         <div className="flex justify-between items-center pt-2 border-t border-white/10">
-          <button
-            onClick={handleCopy}
-            className="flex items-center space-x-1.5 text-xs text-zinc-300 hover:text-white px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 hover:border-white/30 transition backdrop-blur-md"
-          >
-            {copied ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-white" />
-                <span className="text-white font-bold">복사되었습니다!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5" />
-                <span>레시피 복사</span>
-              </>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopy}
+              className="flex items-center space-x-1.5 text-xs text-zinc-300 hover:text-white px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 hover:border-white/30 transition backdrop-blur-md"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-white" />
+                  <span className="text-white font-bold">복사되었습니다!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>레시피 복사</span>
+                </>
+              )}
+            </button>
+
+            {onEdit && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onEdit(recipe);
+                }}
+                className="flex items-center space-x-1.5 text-xs text-zinc-200 hover:text-white px-3.5 py-2 rounded-xl bg-black/60 border border-white/10 hover:border-white/30 transition backdrop-blur-md"
+              >
+                <Edit3 className="w-3.5 h-3.5 text-white" />
+                <span>수정</span>
+              </button>
             )}
-          </button>
+          </div>
 
           <button
             onClick={onClose}

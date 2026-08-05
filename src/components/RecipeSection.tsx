@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Bookmark, Trash2, Eye, Clock, Thermometer, Sliders, Coffee, Flame } from 'lucide-react';
+import { Plus, Search, Filter, Bookmark, Trash2, Eye, Clock, Thermometer, Sliders, Coffee, Flame, Edit3 } from 'lucide-react';
 import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
 
 interface RecipeSectionProps {
@@ -8,6 +8,7 @@ interface RecipeSectionProps {
   deleteRecipe: (id: number) => void;
   toggleFavorite: (id: number) => void;
   onSelectRecipe: (recipe: CoffeeRecipe) => void;
+  onEditRecipe: (recipe: CoffeeRecipe) => void;
 }
 
 export const RecipeSection: React.FC<RecipeSectionProps> = ({
@@ -16,6 +17,7 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
   deleteRecipe,
   toggleFavorite,
   onSelectRecipe,
+  onEditRecipe,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<string>('All');
@@ -209,13 +211,24 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
 
               {/* Card Footer Actions */}
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
-                <button
-                  onClick={() => onSelectRecipe(item)}
-                  className="text-xs text-white hover:text-black font-extrabold bg-white/5 hover:bg-white px-3 py-1.5 rounded-xl border border-white/10 hover:border-white transition-all duration-300 flex items-center gap-1.5"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>상세 가이드</span>
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => onSelectRecipe(item)}
+                    className="text-xs text-white hover:text-black font-extrabold bg-white/5 hover:bg-white px-3 py-1.5 rounded-xl border border-white/10 hover:border-white transition-all duration-300 flex items-center gap-1.5"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>상세 가이드</span>
+                  </button>
+
+                  <button
+                    onClick={() => onEditRecipe(item)}
+                    className="text-xs text-zinc-300 hover:text-white font-semibold bg-white/5 hover:bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-1"
+                    title="레시피 수정"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>수정</span>
+                  </button>
+                </div>
 
                 <button
                   onClick={() => setDeletingId(item.id)}

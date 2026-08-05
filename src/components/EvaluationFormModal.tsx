@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Star, ClipboardCheck, Sparkles, Tag } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Star, ClipboardCheck, Sparkles, Tag, Edit3 } from 'lucide-react';
 import { CoffeeRecipe, BrewEvaluation } from '../types';
 
 interface EvaluationFormModalProps {
@@ -8,6 +8,7 @@ interface EvaluationFormModalProps {
   recipes: CoffeeRecipe[];
   onSubmit: (evaluation: Omit<BrewEvaluation, 'id'>) => void;
   initialRecipeId?: number;
+  initialData?: BrewEvaluation | null;
 }
 
 const PREDEFINED_NOTES = [
@@ -25,6 +26,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   recipes,
   onSubmit,
   initialRecipeId,
+  initialData,
 }) => {
   const selectedDefaultRecipe = recipes.find(r => r.id === initialRecipeId) || recipes[0];
 
@@ -55,6 +57,43 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
     new Date().toISOString().split('T')[0]
   );
   const [memo, setMemo] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setSelectedRecipeId(initialData.recipeId);
+        setCustomRecipeTitle(initialData.recipeTitle || '');
+        setBrewMethod(initialData.brewMethod || '에어로프레스');
+        setBeanName(initialData.beanName || '');
+        setRoastLevel(initialData.roastLevel || '약배전');
+        setRating(initialData.rating || 5);
+        setAcidity(initialData.acidity || 3);
+        setSweetness(initialData.sweetness || 3);
+        setBody(initialData.body || 3);
+        setBitterness(initialData.bitterness || 2);
+        setAftertaste(initialData.aftertaste || 4);
+        setTastingNotes(initialData.tastingNotes || []);
+        setEvalDate(initialData.evalDate || new Date().toISOString().split('T')[0]);
+        setMemo(initialData.memo || '');
+      } else {
+        const defaultRec = recipes.find(r => r.id === initialRecipeId) || recipes[0];
+        setSelectedRecipeId(defaultRec ? defaultRec.id : 0);
+        setCustomRecipeTitle(defaultRec ? defaultRec.title : '');
+        setBrewMethod(defaultRec ? defaultRec.brewMethod : '에어로프레스');
+        setBeanName('');
+        setRoastLevel('약배전');
+        setRating(5);
+        setAcidity(3);
+        setSweetness(3);
+        setBody(3);
+        setBitterness(2);
+        setAftertaste(4);
+        setTastingNotes([]);
+        setEvalDate(new Date().toISOString().split('T')[0]);
+        setMemo('');
+      }
+    }
+  }, [isOpen, initialData, initialRecipeId, recipes]);
 
   if (!isOpen) return null;
 
@@ -150,9 +189,11 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white backdrop-blur-md shadow-md">
-              <ClipboardCheck className="w-4 h-4" />
+              {initialData ? <Edit3 className="w-4 h-4" /> : <ClipboardCheck className="w-4 h-4" />}
             </div>
-            <h3 className="text-lg font-bold text-white tracking-tight">추출 성패 & 센서리 평가 작성</h3>
+            <h3 className="text-lg font-bold text-white tracking-tight">
+              {initialData ? '추출 평가 수정' : '추출 성패 & 센서리 평가 작성'}
+            </h3>
           </div>
           <button
             type="button"
@@ -338,7 +379,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
               type="submit"
               className="px-6 py-2.5 bg-gradient-to-r from-white to-zinc-200 hover:brightness-110 text-black font-extrabold text-xs rounded-xl shadow-lg transition"
             >
-              평가 저장
+              {initialData ? '수정사항 저장' : '평가 저장'}
             </button>
           </div>
         </form>
