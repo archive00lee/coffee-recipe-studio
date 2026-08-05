@@ -20,18 +20,18 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-40 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center gap-4">
+      <div className="max-w-6xl mx-auto px-2.5 sm:px-6 py-2.5 sm:py-3.5 flex justify-between items-center gap-1.5 sm:gap-4">
         
         {/* Brand Logo */}
-        <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('home')}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-zinc-800 via-zinc-900 to-black border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:border-white/50 transition duration-300">
-            <Coffee className="w-5 h-5" />
+        <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0" onClick={() => setActiveTab('home')}>
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-zinc-800 via-zinc-900 to-black border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:border-white/50 transition duration-300">
+            <Coffee className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <div>
-            <h1 className="text-lg font-extrabold tracking-wider text-white flex items-center gap-2">
+            <h1 className="text-sm sm:text-lg font-extrabold tracking-wider text-white flex items-center gap-2 whitespace-nowrap">
               L coffee studio
             </h1>
-            <p className="text-[11px] text-zinc-400 -mt-0.5 font-medium">나만의 커피 추출 레시피 아카이브</p>
+            <p className="text-[11px] text-zinc-400 -mt-0.5 font-medium hidden sm:block whitespace-nowrap">나만의 커피 추출 레시피 아카이브</p>
           </div>
         </div>
 
@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
         <nav className="flex items-center bg-zinc-900/60 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-inner">
           <button
             onClick={() => setActiveTab('home')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'home'
                 ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('recipe')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'recipe'
                 ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('evaluation')}
-            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'evaluation'
                 ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
@@ -85,12 +85,12 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Action Button */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 shrink-0">
           {favoriteCount > 0 && (
             <button
               onClick={() => setActiveTab('recipe')}
               title="즐겨찾기 목록"
-              className="hidden md:flex items-center space-x-1 text-xs text-zinc-200 bg-zinc-900/80 backdrop-blur-md border border-white/10 px-2.5 py-1.5 rounded-xl hover:border-white/30 transition"
+              className="hidden md:flex items-center space-x-1 text-xs text-zinc-200 bg-zinc-900/80 backdrop-blur-md border border-white/10 px-2.5 py-1.5 rounded-xl hover:border-white/30 transition whitespace-nowrap"
             >
               <Bookmark className="w-3.5 h-3.5 fill-white text-white" />
               <span>{favoriteCount}개 저장됨</span>
@@ -99,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={openAddModal}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95"
+            className="flex items-center space-x-1.5 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black text-xs font-extrabold px-2.5 sm:px-3.5 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95 whitespace-nowrap shrink-0"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span className="hidden sm:inline">레시피 추가</span>
