@@ -152,6 +152,10 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                 const currentSec = Number(step.durationSeconds) || 0;
                 const totalCumulativeSec = prevCumulativeSec + currentSec;
 
+                const prevCumulativeWater = recipe.steps!.slice(0, index).reduce((acc, curr) => acc + (Number(curr.waterAmountGrams) || 0), 0);
+                const currentWater = Number(step.waterAmountGrams) || 0;
+                const totalCumulativeWater = prevCumulativeWater + currentWater;
+
                 return (
                   <div
                     key={step.id || index}
@@ -165,9 +169,9 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                         <div>
                           <div className="text-xs font-bold text-white flex items-center gap-2">
                             <span>{step.phaseName}</span>
-                            {step.waterAmountGrams > 0 && (
-                              <span className="text-[10px] font-mono bg-white/10 text-zinc-200 px-1.5 py-0.2 rounded border border-white/20">
-                                누적 물: {step.waterAmountGrams}g
+                            {currentWater > 0 && (
+                              <span className="text-[10px] font-mono bg-white/10 text-zinc-200 px-1.5 py-0.5 rounded border border-white/20">
+                                +물 {currentWater}g
                               </span>
                             )}
                           </div>
@@ -190,9 +194,15 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                       <span className="text-zinc-400 text-[10px]">
                         추출 구간: <strong className="text-zinc-200">{formatTimeDigital(prevCumulativeSec)} ~ {formatTimeDigital(totalCumulativeSec)}</strong>
                       </span>
-                      <span className="text-white font-bold">
-                        누적 {formatSecondsToMinSec(totalCumulativeSec)} ({formatTimeDigital(totalCumulativeSec)})
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-bold">
+                          누적 시간 {formatSecondsToMinSec(totalCumulativeSec)}
+                        </span>
+                        <span className="text-zinc-600">|</span>
+                        <span className="text-white font-bold">
+                          누적 물량 {totalCumulativeWater}g
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );

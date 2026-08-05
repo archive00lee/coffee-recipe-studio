@@ -415,6 +415,10 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                 const currentSec = Number(step.durationSeconds) || 0;
                 const totalCumulativeSec = prevCumulativeSec + currentSec;
 
+                const prevCumulativeWater = steps.slice(0, idx).reduce((acc, curr) => acc + (Number(curr.waterAmountGrams) || 0), 0);
+                const currentWater = Number(step.waterAmountGrams) || 0;
+                const totalCumulativeWater = prevCumulativeWater + currentWater;
+
                 return (
                   <div key={step.id || idx} className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 space-y-2">
                     <div className="flex items-center justify-between gap-2">
@@ -427,7 +431,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                       />
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] text-zinc-400 shrink-0">누적물(g)</span>
+                          <span className="text-[10px] text-zinc-400 shrink-0">물(g)</span>
                           <input
                             type="number"
                             value={step.waterAmountGrams}
@@ -456,14 +460,20 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                       </div>
                     </div>
 
-                    {/* Time Accumulation Indicator */}
+                    {/* Time & Water Accumulation Indicator */}
                     <div className="flex items-center justify-between bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-[11px] font-mono">
                       <span className="text-zinc-400 text-[10px]">
                         구간: <strong className="text-zinc-200">{formatTimeDigital(prevCumulativeSec)} ~ {formatTimeDigital(totalCumulativeSec)}</strong>
                       </span>
-                      <span className="font-bold text-white">
-                        누적 {formatSecondsToMinSec(totalCumulativeSec)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white">
+                          누적 시간 {formatSecondsToMinSec(totalCumulativeSec)}
+                        </span>
+                        <span className="text-zinc-600">|</span>
+                        <span className="font-bold text-white">
+                          누적 물량 {totalCumulativeWater}g
+                        </span>
+                      </div>
                     </div>
 
                     <input
@@ -478,17 +488,18 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               })}
             </div>
 
-            {/* Total Steps Time Summary Card */}
+            {/* Total Steps Time & Water Summary Card */}
             {steps.length > 0 && (() => {
               const totalStepsSec = steps.reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0);
+              const totalStepsWater = steps.reduce((acc, curr) => acc + (Number(curr.waterAmountGrams) || 0), 0);
               return (
                 <div className="flex items-center justify-between bg-black/80 p-3 rounded-xl border border-white/20 text-xs shadow-md">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-white shrink-0" />
                     <div>
-                      <span className="text-zinc-400 font-semibold">모든 단계 시간 총합: </span>
-                      <span className="text-white font-extrabold font-mono text-sm ml-1">
-                        {formatSecondsToMinSec(totalStepsSec)} ({formatTimeDigital(totalStepsSec)})
+                      <span className="text-zinc-400 font-semibold">모든 단계 총합: </span>
+                      <span className="text-white font-extrabold font-mono text-xs sm:text-sm ml-1">
+                        시간 {formatSecondsToMinSec(totalStepsSec)} ({formatTimeDigital(totalStepsSec)}) | 물량 {totalStepsWater}g
                       </span>
                     </div>
                   </div>
@@ -497,10 +508,13 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                     onClick={() => {
                       setMinutes(Math.floor(totalStepsSec / 60));
                       setSeconds(totalStepsSec % 60);
+                      if (totalStepsWater > 0) {
+                        setWaterAmount(totalStepsWater);
+                      }
                     }}
                     className="text-[10px] font-bold text-black bg-gradient-to-r from-white to-zinc-300 hover:brightness-110 px-2.5 py-1 rounded-lg transition shadow shrink-0"
                   >
-                    목표 시간에 적용
+                    목표치에 적용
                   </button>
                 </div>
               );
