@@ -1,6 +1,6 @@
 import React from 'react';
 import { Coffee, Flame, Droplets, ArrowRight, Bookmark, Sparkles, Eye } from 'lucide-react';
-import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
+import { CoffeeRecipe } from '../types';
 
 interface HomeSectionProps {
   recipes: CoffeeRecipe[];
@@ -129,10 +129,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                           {item.orientation}
                         </span>
                       )}
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/20 flex items-center gap-1">
-                        <Flame className="w-2.5 h-2.5 text-white" />
-                        <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevelName)})</span>
-                      </span>
                     </div>
                     {item.isFavorite && (
                       <Bookmark className="w-4 h-4 fill-white text-white shrink-0" />
