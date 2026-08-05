@@ -13,8 +13,8 @@ interface EvaluationFormModalProps {
 }
 
 const PREDEFINED_NOTES = [
-  '자스민', '플로럴', '시트러스', '복숭아', '베리', '청사과', 
-  '밀크초콜릿', '카라멜', '견과류', '바닐라', '다크초콜릿', '허브', '꿀'
+  '자스민', '플로럴', '시트러스', '복숭아', '베리류', '청사과', '얼그레이',
+  '밀크초콜릿', '다크초콜릿', '구운 아몬드', '카라멜', '바닐라', '리치', '열대과일', '요거트', '허브', '꿀'
 ];
 
 export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
@@ -112,23 +112,16 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
     }
   };
 
-  const toggleNote = (note: string) => {
-    if (tastingNotes.includes(note)) {
-      setTastingNotes(tastingNotes.filter(n => n !== note));
-    } else {
-      setTastingNotes([...tastingNotes, note]);
+  const handleAddTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (trimmed && !tastingNotes.includes(trimmed)) {
+      setTastingNotes([...tastingNotes, trimmed]);
+      setCustomTagInput('');
     }
   };
 
-  const handleAddCustomTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && customTagInput.trim()) {
-      e.preventDefault();
-      const val = customTagInput.trim();
-      if (!tastingNotes.includes(val)) {
-        setTastingNotes([...tastingNotes, val]);
-      }
-      setCustomTagInput('');
-    }
+  const handleRemoveTag = (tag: string) => {
+    setTastingNotes(tastingNotes.filter((t) => t !== tag));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -445,35 +438,71 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
               <Tag className="w-3.5 h-3.5 text-zinc-400" />
               <span>시음 노트 키워드</span>
             </label>
-            <div className="flex flex-wrap gap-1.5">
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={customTagInput}
+                onChange={(e) => setCustomTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTag(customTagInput);
+                  }
+                }}
+                placeholder="태그 입력 후 엔터 (예: 청사과)"
+                className="flex-1 bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              />
+              <button
+                type="button"
+                onClick={() => handleAddTag(customTagInput)}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition shrink-0"
+              >
+                추가
+              </button>
+            </div>
+
+            {/* Common tags preset */}
+            <div className="flex flex-wrap gap-1 pt-1">
               {PREDEFINED_NOTES.map((note) => {
                 const isSelected = tastingNotes.includes(note);
                 return (
                   <button
                     key={note}
                     type="button"
-                    onClick={() => toggleNote(note)}
-                    className={`text-xs px-2.5 py-1 rounded-xl border transition backdrop-blur-md ${
+                    onClick={() => handleAddTag(note)}
+                    className={`text-[10px] px-2 py-0.5 rounded-lg border transition ${
                       isSelected
-                        ? 'bg-gradient-to-r from-white to-zinc-200 text-black border-white font-bold shadow-md'
-                        : 'bg-black/60 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white'
+                        ? 'bg-white text-black font-extrabold border-white'
+                        : 'bg-black/40 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white'
                     }`}
                   >
-                    #{note}
+                    +{note}
                   </button>
                 );
               })}
             </div>
-            <div className="pt-1">
-              <input
-                type="text"
-                value={customTagInput}
-                onChange={(e) => setCustomTagInput(e.target.value)}
-                onKeyDown={handleAddCustomTag}
-                placeholder="직접 태그 입력 후 Enter (예: 패션후르츠, 피치, 베르가못)"
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
-              />
-            </div>
+
+            {/* Selected Tasting Notes list with X delete buttons */}
+            {tastingNotes.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1.5 bg-black/40 p-2.5 rounded-xl border border-white/5">
+                {tastingNotes.map((note) => (
+                  <span
+                    key={note}
+                    className="text-xs font-bold bg-white/15 text-white border border-white/30 px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm"
+                  >
+                    <span>{note}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(note)}
+                      className="hover:text-red-400 transition ml-0.5 p-0.5"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Memo & Extraction Feedback */}
