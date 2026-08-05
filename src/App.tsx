@@ -25,9 +25,9 @@ export default function App() {
   const [recipes, setRecipes] = useState<CoffeeRecipe[]>(() => {
     try {
       const saved = localStorage.getItem('coffee_recipes_v2');
-      if (saved) {
+      if (saved !== null) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
@@ -40,9 +40,9 @@ export default function App() {
   const [evaluations, setEvaluations] = useState<BrewEvaluation[]>(() => {
     try {
       const saved = localStorage.getItem('coffee_evaluations_v1');
-      if (saved) {
+      if (saved !== null) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
@@ -76,17 +76,14 @@ export default function App() {
 
         if (!isMounted) return;
 
-        if (cloudRecipes && cloudRecipes.length > 0) {
+        if (cloudRecipes !== null) {
           setRecipes(cloudRecipes);
-          setIsCloudConnected(true);
-        } else if (cloudRecipes !== null) {
-          // Connected to Supabase, but DB table is empty yet
           setIsCloudConnected(true);
         } else {
           setIsCloudConnected(false);
         }
 
-        if (cloudEvals && cloudEvals.length > 0) {
+        if (cloudEvals !== null) {
           setEvaluations(cloudEvals);
         }
       } catch (err) {
