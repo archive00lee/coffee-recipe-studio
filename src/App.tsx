@@ -285,7 +285,7 @@ export default function App() {
           await fetchBeans();
         } else {
           console.error('Supabase Bean Update Error:', result.error);
-          setBeans((prev) => prev.map((b) => (b.id === updatedBean.id ? updatedBean : b)));
+          alert("원두 저장 실패!\n" + (result.error?.message || result.error || '알 수 없는 오류'));
         }
       } else {
         setBeans((prev) => prev.map((b) => (b.id === updatedBean.id ? updatedBean : b)));
@@ -305,7 +305,7 @@ export default function App() {
           await fetchBeans();
         } else {
           console.error('Supabase Bean Insert Error:', result.error);
-          setBeans((prev) => [newBean, ...prev]);
+          alert("원두 저장 실패!\n" + (result.error?.message || result.error || '알 수 없는 오류'));
         }
       } else {
         setBeans((prev) => [newBean, ...prev]);
