@@ -1,0 +1,113 @@
+import React from 'react';
+import { Coffee, Bookmark, Plus, Compass, ClipboardCheck } from 'lucide-react';
+
+interface HeaderProps {
+  activeTab: 'home' | 'recipe' | 'evaluation';
+  setActiveTab: (tab: 'home' | 'recipe' | 'evaluation') => void;
+  openAddModal: () => void;
+  recipeCount: number;
+  evaluationCount: number;
+  favoriteCount: number;
+}
+
+export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  setActiveTab,
+  openAddModal,
+  recipeCount,
+  evaluationCount,
+  favoriteCount
+}) => {
+  return (
+    <header className="border-b border-white/10 bg-black/50 backdrop-blur-xl sticky top-0 z-40 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center gap-4">
+        
+        {/* Brand Logo */}
+        <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => setActiveTab('home')}>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-zinc-800 via-zinc-900 to-black border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:border-white/50 transition duration-300">
+            <Coffee className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-extrabold tracking-wider text-white flex items-center gap-2">
+              L coffee studio
+            </h1>
+            <p className="text-[11px] text-zinc-400 -mt-0.5 font-medium">나만의 커피 추출 레시피 아카이브</p>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <nav className="flex items-center bg-zinc-900/60 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-inner">
+          <button
+            onClick={() => setActiveTab('home')}
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              activeTab === 'home'
+                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>홈</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('recipe')}
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              activeTab === 'recipe'
+                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Coffee className="w-3.5 h-3.5" />
+            <span>레시피</span>
+            <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+              activeTab === 'recipe' ? 'bg-black text-white' : 'bg-white/10 text-zinc-300'
+            }`}>
+              {recipeCount}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('evaluation')}
+            className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              activeTab === 'evaluation'
+                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <ClipboardCheck className="w-3.5 h-3.5" />
+            <span>추출평가</span>
+            <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+              activeTab === 'evaluation' ? 'bg-black text-white' : 'bg-white/10 text-zinc-300'
+            }`}>
+              {evaluationCount}
+            </span>
+          </button>
+        </nav>
+
+        {/* Action Button */}
+        <div className="flex items-center space-x-2">
+          {favoriteCount > 0 && (
+            <button
+              onClick={() => setActiveTab('recipe')}
+              title="즐겨찾기 목록"
+              className="hidden md:flex items-center space-x-1 text-xs text-zinc-200 bg-zinc-900/80 backdrop-blur-md border border-white/10 px-2.5 py-1.5 rounded-xl hover:border-white/30 transition"
+            >
+              <Bookmark className="w-3.5 h-3.5 fill-white text-white" />
+              <span>{favoriteCount}개 저장됨</span>
+            </button>
+          )}
+
+          <button
+            onClick={openAddModal}
+            className="flex items-center space-x-1.5 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black text-xs font-extrabold px-3.5 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span className="hidden sm:inline">레시피 추가</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+  );
+};
+

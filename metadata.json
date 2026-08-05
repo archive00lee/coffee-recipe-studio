@@ -1,0 +1,6 @@
+{
+  "name": "L coffee studio",
+  "description": "커피 추출 비율, 분쇄도, 추출 시간 및 레시피 기록 관리 아카이브 스튜디오",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
