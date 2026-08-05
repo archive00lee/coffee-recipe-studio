@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered } from 'lucide-react';
-import { CoffeeRecipe } from '../types';
+import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered, Flame } from 'lucide-react';
+import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
 
 interface RecipeDetailModalProps {
   recipe: CoffeeRecipe | null;
@@ -15,12 +15,17 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
 
   if (!recipe) return null;
 
+  const agtron = recipe.agtronNumber ?? 55;
+  const roastLevel = getAgtronRoastLevel(agtron, recipe.roastLevelName);
+
   const handleCopy = () => {
     const text = `[L coffee studio 레시피] ${recipe.title}\n` +
       `• 추출도구: ${recipe.brewMethod}\n` +
       (recipe.filterType ? `• 필터: ${recipe.filterType}\n` : '') +
       (recipe.capType ? `• 캡: ${recipe.capType}\n` : '') +
+      (recipe.orientation ? `• 추출방향: ${recipe.orientation}\n` : '') +
       `• 비율: ${recipe.ratioText}\n` +
+      `• 원두 배전도: Agtron No. ${agtron} (${roastLevel})\n` +
       `• 물 온도: ${recipe.waterTempCelsius}°C\n` +
       `• 분쇄도: ${recipe.grindSizeMicrons} μm\n` +
       `• 목표 시간: ${Math.floor(recipe.totalTimeSeconds / 60)}분 ${recipe.totalTimeSeconds % 60}초\n` +
@@ -56,6 +61,14 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                   캡: {recipe.capType}
                 </span>
               )}
+              {recipe.orientation && (
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-black/80 text-zinc-300 border border-white/10">
+                  방향: {recipe.orientation}
+                </span>
+              )}
+              <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/30">
+                Agtron {agtron} ({roastLevel})
+              </span>
             </div>
             <h3 className="text-xl font-extrabold text-white mt-2 tracking-tight">{recipe.title}</h3>
           </div>
@@ -68,49 +81,60 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
         </div>
 
         {/* Recipe Spec Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <div className="text-[11px] text-zinc-400 flex items-center gap-1 mb-1">
+            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
               <Scale className="w-3.5 h-3.5 text-white" />
-              <span>원두량 / 물</span>
+              <span>원두 / 물</span>
             </div>
-            <div className="text-sm font-bold text-white font-mono">
+            <div className="text-xs font-bold text-white font-mono">
               {recipe.beanAmountGrams}g / {recipe.waterAmountMl}ml
             </div>
             <div className="text-[10px] text-zinc-400 mt-0.5 font-mono">비율 1:{calculatedRatio}</div>
           </div>
 
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <div className="text-[11px] text-zinc-400 flex items-center gap-1 mb-1">
+            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
+              <Flame className="w-3.5 h-3.5 text-amber-400" />
+              <span>배전도</span>
+            </div>
+            <div className="text-xs font-bold text-amber-300 font-mono truncate">
+              Agtron {agtron}
+            </div>
+            <div className="text-[10px] text-zinc-300 font-bold mt-0.5 truncate">{roastLevel}</div>
+          </div>
+
+          <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
+            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
               <Thermometer className="w-3.5 h-3.5 text-zinc-300" />
               <span>추출 수온</span>
             </div>
-            <div className="text-sm font-bold text-zinc-100 font-mono">
+            <div className="text-xs font-bold text-zinc-100 font-mono">
               {recipe.waterTempCelsius}°C
             </div>
             <div className="text-[10px] text-zinc-400 mt-0.5">권장 수온</div>
           </div>
 
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <div className="text-[11px] text-zinc-400 flex items-center gap-1 mb-1">
+            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
               <Sliders className="w-3.5 h-3.5 text-white" />
               <span>분쇄도</span>
             </div>
-            <div className="text-sm font-mono font-bold text-white truncate">
+            <div className="text-xs font-mono font-bold text-white truncate">
               {recipe.grindSizeMicrons} μm
             </div>
             <div className="text-[10px] text-zinc-400 mt-0.5">입자 미크론</div>
           </div>
 
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <div className="text-[11px] text-zinc-400 flex items-center gap-1 mb-1">
+            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
               <Clock className="w-3.5 h-3.5 text-zinc-300" />
-              <span>총 추출 시간</span>
+              <span>목표 시간</span>
             </div>
-            <div className="text-sm font-bold text-zinc-100 font-mono">
+            <div className="text-xs font-bold text-zinc-100 font-mono">
               {Math.floor(recipe.totalTimeSeconds / 60)}분 {recipe.totalTimeSeconds % 60}초
             </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5">목표 시간</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5">추출 타임</div>
           </div>
         </div>
 

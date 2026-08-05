@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Bookmark, Trash2, Eye, Clock, Thermometer, Sliders, Coffee, RotateCcw } from 'lucide-react';
-import { CoffeeRecipe } from '../types';
+import { Plus, Search, Filter, Bookmark, Trash2, Eye, Clock, Thermometer, Sliders, Coffee, Flame } from 'lucide-react';
+import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
 
 interface RecipeSectionProps {
   recipes: CoffeeRecipe[];
@@ -8,7 +8,6 @@ interface RecipeSectionProps {
   deleteRecipe: (id: number) => void;
   toggleFavorite: (id: number) => void;
   onSelectRecipe: (recipe: CoffeeRecipe) => void;
-  resetDefaultRecipes: () => void;
 }
 
 export const RecipeSection: React.FC<RecipeSectionProps> = ({
@@ -17,7 +16,6 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
   deleteRecipe,
   toggleFavorite,
   onSelectRecipe,
-  resetDefaultRecipes,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<string>('All');
@@ -54,16 +52,6 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          {recipes.length === 0 && (
-            <button
-              onClick={resetDefaultRecipes}
-              className="flex items-center space-x-1.5 bg-black/60 hover:bg-black/80 backdrop-blur-md text-zinc-300 hover:text-white text-xs px-3.5 py-2 rounded-xl border border-white/10 transition"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-white" />
-              <span>기본 데이터 복원</span>
-            </button>
-          )}
-
           <button
             onClick={openModal}
             className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black px-4 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.15)] font-extrabold text-xs sm:text-sm active:scale-95"
@@ -156,6 +144,15 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
                         캡: {item.capType}
                       </span>
                     )}
+                    {item.orientation && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-black/80 text-zinc-300 border border-white/10">
+                        {item.orientation}
+                      </span>
+                    )}
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                      <Flame className="w-2.5 h-2.5 text-amber-400" />
+                      <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevelName)})</span>
+                    </span>
                   </div>
 
                   <button

@@ -61,16 +61,32 @@ export interface CoffeeRecipe {
   brewMethod: string; // 추출도구
   filterType?: string; // 필터
   capType?: string; // 캡 (에어로프레스 전용: 기본, 플로우컨트롤)
+  orientation?: '정방향' | '역방향' | string; // 추출방향 (에어로프레스 전용: 정방향, 역방향)
   beanAmountGrams: number;
   waterAmountMl: number;
   ratioText: string; // e.g., "원두 20g / 물 300ml (1:15)"
   waterTempCelsius: number;
   grindSizeMicrons: number; // 분쇄도 (미크론 μm 숫자)
   totalTimeSeconds: number;
+  agtronNumber?: number; // 배전도 (Agtron No. 숫자 25~95)
+  roastLevelName?: string; // e.g., 'LIGHT Roast', 'HIGH Roast', etc.
   desc: string;
   steps?: BrewStep[];
   isFavorite?: boolean;
   createdAt: string;
+}
+
+export function getAgtronRoastLevel(agtron: number, customName?: string): string {
+  if (customName && customName.trim()) {
+    return customName;
+  }
+  if (agtron >= 80) return 'LIGHT Roast';
+  if (agtron >= 70) return 'CINNAMON Roast';
+  if (agtron >= 60) return 'MEDIUM Roast';
+  if (agtron >= 50) return 'CITY Roast';
+  if (agtron >= 45) return 'FULL CITY Roast';
+  if (agtron >= 35) return 'FRENCH Roast';
+  return 'ITALIAN Roast';
 }
 
 export interface BrewEvaluation {

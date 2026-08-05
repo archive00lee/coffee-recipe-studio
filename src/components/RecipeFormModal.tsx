@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter } from 'lucide-react';
-import { CoffeeRecipe, BrewStep, FILTER_OPTIONS_MAP } from '../types';
+import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter, Flame, Compass } from 'lucide-react';
+import { CoffeeRecipe, BrewStep, FILTER_OPTIONS_MAP, getAgtronRoastLevel } from '../types';
 
 interface RecipeFormModalProps {
   isOpen: boolean;
@@ -17,10 +17,13 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   const [brewMethod, setBrewMethod] = useState<string>('에어로프레스');
   const [filterType, setFilterType] = useState<string>('기본 1장');
   const [capType, setCapType] = useState<string>('기본');
+  const [orientation, setOrientation] = useState<'정방향' | '역방향'>('정방향');
   const [beanAmount, setBeanAmount] = useState<number>(20);
   const [waterAmount, setWaterAmount] = useState<number>(300);
   const [waterTemp, setWaterTemp] = useState<number>(93);
   const [grindSizeMicrons, setGrindSizeMicrons] = useState<number>(800);
+  const [agtronNumber, setAgtronNumber] = useState<number>(55);
+  const [customRoastName, setCustomRoastName] = useState<string>('');
   const [minutes, setMinutes] = useState<number>(2);
   const [seconds, setSeconds] = useState<number>(30);
   const [desc, setDesc] = useState('');
@@ -78,11 +81,14 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
       brewMethod,
       filterType,
       capType: brewMethod === '에어로프레스' ? capType : undefined,
+      orientation: brewMethod === '에어로프레스' ? orientation : undefined,
       beanAmountGrams: Number(beanAmount),
       waterAmountMl: Number(waterAmount),
       ratioText,
       waterTempCelsius: Number(waterTemp),
       grindSizeMicrons: Number(grindSizeMicrons) || 800,
+      agtronNumber: Number(agtronNumber) || 55,
+      roastLevelName: getAgtronRoastLevel(agtronNumber, customRoastName),
       totalTimeSeconds: Number(totalTimeSeconds),
       desc: desc.trim() || '추출 설명 및 팁이 입력되지 않았습니다.',
       steps,
@@ -168,20 +174,53 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
             </div>
 
             {brewMethod === '에어로프레스' && (
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1 flex items-center gap-1">
-                  <Sliders className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>캡</span>
-                </label>
-                <select
-                  value={capType}
-                  onChange={(e) => setCapType(e.target.value)}
-                  className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
-                >
-                  <option value="기본">기본</option>
-                  <option value="플로우컨트롤">플로우컨트롤</option>
-                </select>
-              </div>
+              <>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1 flex items-center gap-1">
+                    <Sliders className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>캡</span>
+                  </label>
+                  <select
+                    value={capType}
+                    onChange={(e) => setCapType(e.target.value)}
+                    className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
+                  >
+                    <option value="기본">기본</option>
+                    <option value="플로우컨트롤">플로우컨트롤</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1 flex items-center gap-1">
+                    <Compass className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>추출방향</span>
+                  </label>
+                  <div className="grid grid-cols-2 p-1 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setOrientation('정방향')}
+                      className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                        orientation === '정방향'
+                          ? 'bg-white text-black shadow-md font-extrabold'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      정방향
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOrientation('역방향')}
+                      className={`py-2 text-xs font-bold rounded-lg transition-all ${
+                        orientation === '역방향'
+                          ? 'bg-white text-black shadow-md font-extrabold'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      역방향
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
@@ -238,6 +277,111 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                   onChange={(e) => setWaterAmount(Number(e.target.value))}
                   className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-white/50 font-mono"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Agtron No. Roast Level Slider Section */}
+          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-3">
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-amber-400" />
+                <span>원두 배전도 (Agtron No.)</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-500/30 text-amber-300 text-xs font-mono font-bold">
+                  <span>Agtron No.</span>
+                  <input
+                    type="number"
+                    min="25"
+                    max="95"
+                    value={agtronNumber || ''}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setAgtronNumber(val);
+                      if (val < 60 || val > 70) {
+                        setCustomRoastName('');
+                      }
+                    }}
+                    onBlur={() => {
+                      let val = agtronNumber;
+                      if (!val || val < 25) val = 25;
+                      if (val > 95) val = 95;
+                      setAgtronNumber(val);
+                    }}
+                    className="w-12 bg-black/60 border border-amber-500/40 rounded px-1 py-0.5 text-center text-amber-300 font-bold font-mono focus:outline-none focus:border-amber-300 text-xs"
+                  />
+                </div>
+                <span className="text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/20">
+                  {getAgtronRoastLevel(agtronNumber, customRoastName)}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <input
+                type="range"
+                min="25"
+                max="95"
+                step="1"
+                value={agtronNumber}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setAgtronNumber(val);
+                  // 60~70 범위를 벗어나는 수치인 경우 customRoastName 리셋
+                  if (val < 60 || val > 70) {
+                    setCustomRoastName('');
+                  }
+                }}
+                className="w-full h-2 bg-gradient-to-r from-amber-950 via-amber-700 to-amber-200 rounded-lg appearance-none cursor-pointer accent-white"
+              />
+
+              <div className="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
+                <span>25</span>
+                <span>35</span>
+                <span>45</span>
+                <span>50</span>
+                <span>60</span>
+                <span>70</span>
+                <span>80</span>
+                <span>95</span>
+              </div>
+            </div>
+
+            {/* Quick preset selector buttons (without numbers in label) */}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-[10px] text-zinc-400 font-semibold">배전도 프리셋 태그</div>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { name: 'LIGHT', val: 85, roast: 'LIGHT Roast' },
+                  { name: 'CINNAMON', val: 75, roast: 'CINNAMON Roast' },
+                  { name: 'MEDIUM', val: 65, roast: 'MEDIUM Roast' },
+                  { name: 'HIGH', val: 65, roast: 'HIGH Roast' },
+                  { name: 'CITY', val: 55, roast: 'CITY Roast' },
+                  { name: 'FULL CITY', val: 47, roast: 'FULL CITY Roast' },
+                  { name: 'FRENCH', val: 38, roast: 'FRENCH Roast' },
+                  { name: 'ITALIAN', val: 28, roast: 'ITALIAN Roast' },
+                ].map((p) => {
+                  const currentDisplay = getAgtronRoastLevel(agtronNumber, customRoastName);
+                  const isSelected = currentDisplay === p.roast;
+                  return (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => {
+                        setAgtronNumber(p.val);
+                        setCustomRoastName(p.roast);
+                      }}
+                      className={`text-[10px] font-mono px-2.5 py-1 rounded-md border transition ${
+                        isSelected
+                          ? 'bg-amber-400 text-black font-extrabold border-amber-300 shadow-md'
+                          : 'bg-black/40 text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
+                      }`}
+                    >
+                      {p.name}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

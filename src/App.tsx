@@ -7,8 +7,6 @@ import { RecipeDetailModal } from './components/RecipeDetailModal';
 import { RecipeFormModal } from './components/RecipeFormModal';
 import { EvaluationFormModal } from './components/EvaluationFormModal';
 import { CoffeeRecipe, BrewEvaluation } from './types';
-import { defaultRecipes } from './data/defaultRecipes';
-import { defaultEvaluations } from './data/defaultEvaluations';
 import {
   isSupabaseConfigured,
   fetchRecipesFromSupabase,
@@ -19,38 +17,11 @@ import {
   insertEvaluationToSupabase,
   deleteEvaluationFromSupabase,
 } from './lib/supabase';
-import { Cloud, Database, HardDrive } from 'lucide-react';
+import { Cloud, Database, AlertCircle } from 'lucide-react';
 
 export default function App() {
-  const [recipes, setRecipes] = useState<CoffeeRecipe[]>(() => {
-    try {
-      const saved = localStorage.getItem('coffee_recipes_v2');
-      if (saved !== null) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to load recipes from localStorage:', e);
-    }
-    return defaultRecipes;
-  });
-
-  const [evaluations, setEvaluations] = useState<BrewEvaluation[]>(() => {
-    try {
-      const saved = localStorage.getItem('coffee_evaluations_v1');
-      if (saved !== null) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to load evaluations from localStorage:', e);
-    }
-    return defaultEvaluations;
-  });
+  const [recipes, setRecipes] = useState<CoffeeRecipe[]>([]);
+  const [evaluations, setEvaluations] = useState<BrewEvaluation[]>([]);
 
   const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation'>('home');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -58,7 +29,7 @@ export default function App() {
   const [selectedRecipeForDetail, setSelectedRecipeForDetail] = useState<CoffeeRecipe | null>(null);
   const [isCloudConnected, setIsCloudConnected] = useState<boolean | null>(null);
 
-  // Initial load from Supabase DB with fallback to localStorage / defaults
+  // Initial load from Supabase DB as the single source of truth
   useEffect(() => {
     let isMounted = true;
 
@@ -99,24 +70,6 @@ export default function App() {
     };
   }, []);
 
-  // Sync recipes to localStorage as persistent local backup
-  useEffect(() => {
-    try {
-      localStorage.setItem('coffee_recipes_v2', JSON.stringify(recipes));
-    } catch (e) {
-      console.error('Failed to save recipes to localStorage:', e);
-    }
-  }, [recipes]);
-
-  // Sync evaluations to localStorage as persistent local backup
-  useEffect(() => {
-    try {
-      localStorage.setItem('coffee_evaluations_v1', JSON.stringify(evaluations));
-    } catch (e) {
-      console.error('Failed to save evaluations to localStorage:', e);
-    }
-  }, [evaluations]);
-
   // Handlers
   const handleAddRecipe = async (newRecipeData: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => {
     const newRecipe: CoffeeRecipe = {
@@ -124,12 +77,22 @@ export default function App() {
       id: Date.now(),
       createdAt: new Date().toISOString().split('T')[0],
     };
-    setRecipes((prev) => [newRecipe, ...prev]);
 
-    // Send insert async request to Supabase DB
+    // Send insert request to Supabase DB
+    let isSaved = false;
     if (isSupabaseConfigured) {
-      await insertRecipeToSupabase(newRecipe);
+      isSaved = await insertRecipeToSupabase(newRecipe);
     }
+
+    // Update state directly; or refetch from DB
+    if (isSaved) {
+      const reFetched = await fetchRecipesFromSupabase();
+      if (reFetched) {
+        setRecipes(reFetched);
+        return;
+      }
+    }
+    setRecipes((prev) => [newRecipe, ...prev]);
   };
 
   const handleDeleteRecipe = async (id: number) => {
@@ -138,7 +101,7 @@ export default function App() {
       setSelectedRecipeForDetail(null);
     }
 
-    // Send delete async request to Supabase DB
+    // Send delete request to Supabase DB
     if (isSupabaseConfigured) {
       await deleteRecipeFromSupabase(id);
     }
@@ -156,14 +119,10 @@ export default function App() {
       })
     );
 
-    // Send update async request to Supabase DB
+    // Send update request to Supabase DB
     if (isSupabaseConfigured) {
       await toggleFavoriteInSupabase(id, nextFavState);
     }
-  };
-
-  const handleResetDefaultRecipes = () => {
-    setRecipes(defaultRecipes);
   };
 
   const handleAddEvaluation = async (newEvalData: Omit<BrewEvaluation, 'id'>) => {
@@ -171,18 +130,27 @@ export default function App() {
       ...newEvalData,
       id: Date.now(),
     };
-    setEvaluations((prev) => [newEval, ...prev]);
 
-    // Send insert async request to Supabase DB
+    // Send insert request to Supabase DB
+    let isSaved = false;
     if (isSupabaseConfigured) {
-      await insertEvaluationToSupabase(newEval);
+      isSaved = await insertEvaluationToSupabase(newEval);
     }
+
+    if (isSaved) {
+      const reFetched = await fetchEvaluationsFromSupabase();
+      if (reFetched) {
+        setEvaluations(reFetched);
+        return;
+      }
+    }
+    setEvaluations((prev) => [newEval, ...prev]);
   };
 
   const handleDeleteEvaluation = async (id: number) => {
     setEvaluations((prev) => prev.filter((item) => item.id !== id));
 
-    // Send delete async request to Supabase DB
+    // Send delete request to Supabase DB
     if (isSupabaseConfigured) {
       await deleteEvaluationFromSupabase(id);
     }
@@ -213,14 +181,14 @@ export default function App() {
           {isCloudConnected === true && (
             <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs backdrop-blur-md">
               <Cloud className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span>Supabase 클라우드 데이터베이스 연동 완료 (실시간 동기화 중)</span>
+              <span>Supabase 클라우드 데이터베이스 연동 완료 (단일 데이터 출처 동기화 중)</span>
             </div>
           )}
           {isCloudConnected === false && (
             <div className="flex items-center justify-between gap-2 px-3.5 py-1.5 rounded-xl bg-zinc-900/80 border border-white/10 text-zinc-400 text-xs backdrop-blur-md">
               <div className="flex items-center gap-2">
-                <HardDrive className="w-3.5 h-3.5 text-zinc-300 shrink-0" />
-                <span>로컬 스토리지 보존 모드 실행 중 (Supabase 환경 변수를 등록하면 클라우드 동기화가 활성화됩니다)</span>
+                <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Supabase 클라우드 DB 연동 준비 중 (VITE_SUPABASE_URL 및 VITE_SUPABASE_ANON_KEY 설정 필요)</span>
               </div>
             </div>
           )}
@@ -243,7 +211,6 @@ export default function App() {
               deleteRecipe={handleDeleteRecipe}
               toggleFavorite={handleToggleFavorite}
               onSelectRecipe={(recipe) => setSelectedRecipeForDetail(recipe)}
-              resetDefaultRecipes={handleResetDefaultRecipes}
             />
           )}
 
