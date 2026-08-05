@@ -23,10 +23,6 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition duration-700"></div>
 
         <div className="md:col-span-8 space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-semibold backdrop-blur-md">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-            <span>PRECISION BREWING ARCHIVE</span>
-          </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
             Coffee recipe archive
           </h2>

@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <ClipboardCheck className="w-3.5 h-3.5" />
-            <span>추출평가</span>
+            <span>센서리</span>
             <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
               activeTab === 'evaluation' ? 'bg-black text-white' : 'bg-white/10 text-zinc-300'
             }`}>

@@ -64,15 +64,11 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
       {/* Top Hero Banner */}
       <div className="bg-gradient-to-br from-zinc-900/80 via-zinc-950/70 to-black/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 text-xs font-semibold backdrop-blur-md">
-            <ClipboardCheck className="w-3.5 h-3.5 text-white" />
-            <span>BREW EVALUATION & SENSORY LOG</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            추출 성패 & 센서리 평가
+            SENSORY LOG
           </h2>
           <p className="text-zinc-300 text-xs sm:text-sm max-w-xl leading-relaxed">
-            레시피별 추출 맛과 바디감, 산미, 후미를 기록하여 다음 추출 시 반영할 조절 노하우를 누적하세요.
+            레시피별 맛과 바디감, 산미, 후미를 평가하고 저장하세요.
           </p>
         </div>
 
