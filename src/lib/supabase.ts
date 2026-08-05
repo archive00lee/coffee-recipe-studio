@@ -1,15 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import { CoffeeRecipe, BrewEvaluation } from '../types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const rawUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const cleanUrl = rawUrl.replace(/\/+(rest\/v1.*)?$/, '');
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 export const isSupabaseConfigured = Boolean(
-  supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http')
+  cleanUrl && supabaseAnonKey && cleanUrl.startsWith('http')
 );
 
 export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(cleanUrl, supabaseAnonKey)
   : null;
 
 // Row mapping helpers supporting both camelCase and snake_case column schemas
