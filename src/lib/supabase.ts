@@ -225,21 +225,16 @@ export async function fetchEvaluationsFromSupabase(): Promise<BrewEvaluation[] |
   }
 }
 
-export async function insertEvaluationToSupabase(evaluation: BrewEvaluation): Promise<boolean> {
-  if (!supabase) return false;
+export async function insertEvaluationToSupabase(evaluation: BrewEvaluation): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
   try {
     const payload = {
       id: evaluation.id,
       recipe_id: evaluation.recipeId,
-      recipeId: evaluation.recipeId,
       recipe_title: evaluation.recipeTitle,
-      recipeTitle: evaluation.recipeTitle,
       brew_method: evaluation.brewMethod,
-      brewMethod: evaluation.brewMethod,
       bean_name: evaluation.beanName,
-      beanName: evaluation.beanName,
       roast_level: evaluation.roastLevel,
-      roastLevel: evaluation.roastLevel,
       rating: evaluation.rating,
       acidity: evaluation.acidity,
       sweetness: evaluation.sweetness,
@@ -247,20 +242,18 @@ export async function insertEvaluationToSupabase(evaluation: BrewEvaluation): Pr
       bitterness: evaluation.bitterness,
       aftertaste: evaluation.aftertaste,
       tasting_notes: evaluation.tastingNotes || [],
-      tastingNotes: evaluation.tastingNotes || [],
       eval_date: evaluation.evalDate,
-      evalDate: evaluation.evalDate,
       memo: evaluation.memo,
     };
     const { error } = await supabase.from('evaluations').insert([payload]);
     if (error) {
-      console.warn('Supabase insert evaluation error:', error.message);
-      return false;
+      console.error('Supabase Evaluation Insert Error:', error);
+      return { success: false, error };
     }
-    return true;
+    return { success: true };
   } catch (err) {
-    console.warn('Supabase insert evaluation exception:', err);
-    return false;
+    console.error('Supabase Evaluation Insert Exception:', err);
+    return { success: false, error: err };
   }
 }
 

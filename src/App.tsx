@@ -79,6 +79,15 @@ export default function App() {
     }
   };
 
+  // Fetch evaluations from DB
+  const fetchEvaluations = async () => {
+    if (!isSupabaseConfigured) return;
+    const cloudEvals = await fetchEvaluationsFromSupabase();
+    if (cloudEvals !== null) {
+      setEvaluations(cloudEvals);
+    }
+  };
+
   // Handlers
   const handleAddRecipe = async (newRecipeData: Omit<CoffeeRecipe, 'id' | 'createdAt'>) => {
     const newRecipe: CoffeeRecipe = {
@@ -140,19 +149,17 @@ export default function App() {
     };
 
     // Send insert request to Supabase DB
-    let isSaved = false;
     if (isSupabaseConfigured) {
-      isSaved = await insertEvaluationToSupabase(newEval);
-    }
-
-    if (isSaved) {
-      const reFetched = await fetchEvaluationsFromSupabase();
-      if (reFetched) {
-        setEvaluations(reFetched);
-        return;
+      const result = await insertEvaluationToSupabase(newEval);
+      if (result.success) {
+        await fetchEvaluations();
+      } else {
+        console.error('Supabase Evaluation Insert Error:', result.error);
+        alert(`센서리 평가 저장 실패!\n${result.error?.message || result.error || '알 수 없는 오류'}`);
       }
+    } else {
+      setEvaluations((prev) => [newEval, ...prev]);
     }
-    setEvaluations((prev) => [newEval, ...prev]);
   };
 
   const handleDeleteEvaluation = async (id: number) => {
