@@ -1,12 +1,13 @@
 import React from 'react';
-import { Coffee, Bookmark, Compass, ClipboardCheck } from 'lucide-react';
+import { Coffee, Bookmark, Compass, ClipboardCheck, Package } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'home' | 'recipe' | 'evaluation';
-  setActiveTab: (tab: 'home' | 'recipe' | 'evaluation') => void;
+  activeTab: 'home' | 'recipe' | 'evaluation' | 'bean';
+  setActiveTab: (tab: 'home' | 'recipe' | 'evaluation' | 'bean') => void;
   openAddModal?: () => void;
   recipeCount: number;
   evaluationCount: number;
+  beanCount?: number;
   favoriteCount: number;
 }
 
@@ -16,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   openAddModal,
   recipeCount,
   evaluationCount,
+  beanCount = 0,
   favoriteCount
 }) => {
   return (
@@ -24,8 +26,8 @@ export const Header: React.FC<HeaderProps> = ({
         
         {/* Brand Logo */}
         <div className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group shrink-0" onClick={() => setActiveTab('home')}>
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-zinc-800 via-zinc-900 to-black border border-white/20 flex items-center justify-center text-white shadow-lg group-hover:border-white/50 transition duration-300">
-            <Coffee className="w-4 h-4 sm:w-5 sm:h-5" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-white via-zinc-400 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] shadow-lg group-hover:border-white transition duration-300">
+            <Coffee className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </div>
           <div>
             <h1 className="text-sm sm:text-lg font-extrabold tracking-wider text-white flex items-center gap-2 whitespace-nowrap">
@@ -36,12 +38,12 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex items-center bg-zinc-900/60 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-inner">
+        <nav className="flex items-center bg-[#030303]/90 backdrop-blur-md p-1 rounded-xl border border-white/15 shadow-inner overflow-x-auto">
           <button
             onClick={() => setActiveTab('home')}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'home'
-                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -51,33 +53,50 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('recipe')}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'recipe'
-                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <Coffee className="w-3.5 h-3.5" />
             <span>레시피</span>
             <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-              activeTab === 'recipe' ? 'bg-black text-white' : 'bg-white/10 text-zinc-300'
+              activeTab === 'recipe' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
             }`}>
               {recipeCount}
             </span>
           </button>
 
           <button
+            onClick={() => setActiveTab('bean')}
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+              activeTab === 'bean'
+                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-bold'
+                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Package className="w-3.5 h-3.5" />
+            <span>원두</span>
+            <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+              activeTab === 'bean' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
+            }`}>
+              {beanCount}
+            </span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('evaluation')}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'evaluation'
-                ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black shadow-lg shadow-white/10 font-bold'
+                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-bold'
                 : 'text-zinc-400 hover:text-white hover:bg-white/5'
             }`}
           >
             <ClipboardCheck className="w-3.5 h-3.5" />
             <span>센서리</span>
             <span className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-              activeTab === 'evaluation' ? 'bg-black text-white' : 'bg-white/10 text-zinc-300'
+              activeTab === 'evaluation' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
             }`}>
               {evaluationCount}
             </span>
@@ -102,4 +121,5 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+
 

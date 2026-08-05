@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter, Flame, Compass, Edit3 } from 'lucide-react';
-import { CoffeeRecipe, BrewStep, FILTER_OPTIONS_MAP, getAgtronRoastLevel } from '../types';
+import { X, Plus, Trash2, Sliders, Scale, Thermometer, Clock, Sparkles, Filter, Compass, Edit3 } from 'lucide-react';
+import { CoffeeRecipe, BrewStep, FILTER_OPTIONS_MAP, formatSecondsToMinSec, formatTimeDigital } from '../types';
 
 interface RecipeFormModalProps {
   isOpen: boolean;
@@ -24,8 +24,6 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   const [waterAmount, setWaterAmount] = useState<number>(300);
   const [waterTemp, setWaterTemp] = useState<number>(93);
   const [grindSizeMicrons, setGrindSizeMicrons] = useState<number>(800);
-  const [agtronNumber, setAgtronNumber] = useState<number>(55);
-  const [customRoastName, setCustomRoastName] = useState<string>('');
   const [minutes, setMinutes] = useState<number>(2);
   const [seconds, setSeconds] = useState<number>(30);
   const [desc, setDesc] = useState('');
@@ -49,8 +47,6 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
         setWaterAmount(initialData.waterAmountMl || 300);
         setWaterTemp(initialData.waterTempCelsius || 93);
         setGrindSizeMicrons(initialData.grindSizeMicrons || 800);
-        setAgtronNumber(initialData.agtronNumber ?? 55);
-        setCustomRoastName(initialData.roastLevelName || '');
         const totalSec = initialData.totalTimeSeconds || 150;
         setMinutes(Math.floor(totalSec / 60));
         setSeconds(totalSec % 60);
@@ -71,8 +67,6 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
         setWaterAmount(300);
         setWaterTemp(93);
         setGrindSizeMicrons(800);
-        setAgtronNumber(55);
-        setCustomRoastName('');
         setMinutes(2);
         setSeconds(30);
         setDesc('');
@@ -137,8 +131,8 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
       ratioText,
       waterTempCelsius: Number(waterTemp),
       grindSizeMicrons: Number(grindSizeMicrons) || 800,
-      agtronNumber: Number(agtronNumber) || 55,
-      roastLevelName: getAgtronRoastLevel(agtronNumber, customRoastName),
+      agtronNumber: 55,
+      roastLevelName: '',
       totalTimeSeconds: Number(totalTimeSeconds),
       desc: desc.trim() || '추출 설명 및 팁이 입력되지 않았습니다.',
       steps,
@@ -152,14 +146,14 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-950/90 to-black/95 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+      <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-5 my-8 max-h-[90vh] overflow-y-auto ring-1 ring-white/10">
         
         {/* Modal Title Bar */}
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white backdrop-blur-md shadow-md">
-              {initialData ? <Edit3 className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white via-zinc-300 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] backdrop-blur-md shadow-md">
+              {initialData ? <Edit3 className="w-4 h-4 stroke-[2.5]" /> : <Sparkles className="w-4 h-4 stroke-[2.5]" />}
             </div>
             <h3 className="text-lg font-bold text-white tracking-tight">
               {initialData ? '커스텀 레시피 수정' : '새 커스텀 레시피 작성'}
@@ -333,111 +327,6 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
             </div>
           </div>
 
-          {/* Agtron No. Roast Level Slider Section */}
-          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-3">
-            <div className="flex justify-between items-center">
-              <label className="text-xs font-semibold text-white flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-amber-400" />
-                <span>원두 배전도 (Agtron No.)</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-amber-950/60 px-2.5 py-1 rounded-lg border border-amber-500/30 text-amber-300 text-xs font-mono font-bold">
-                  <span>Agtron No.</span>
-                  <input
-                    type="number"
-                    min="25"
-                    max="95"
-                    value={agtronNumber || ''}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      setAgtronNumber(val);
-                      if (val < 60 || val > 70) {
-                        setCustomRoastName('');
-                      }
-                    }}
-                    onBlur={() => {
-                      let val = agtronNumber;
-                      if (!val || val < 25) val = 25;
-                      if (val > 95) val = 95;
-                      setAgtronNumber(val);
-                    }}
-                    className="w-12 bg-black/60 border border-amber-500/40 rounded px-1 py-0.5 text-center text-amber-300 font-bold font-mono focus:outline-none focus:border-amber-300 text-xs"
-                  />
-                </div>
-                <span className="text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/20">
-                  {getAgtronRoastLevel(agtronNumber, customRoastName)}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <input
-                type="range"
-                min="25"
-                max="95"
-                step="1"
-                value={agtronNumber}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setAgtronNumber(val);
-                  // 60~70 범위를 벗어나는 수치인 경우 customRoastName 리셋
-                  if (val < 60 || val > 70) {
-                    setCustomRoastName('');
-                  }
-                }}
-                className="w-full h-2 bg-gradient-to-r from-amber-950 via-amber-700 to-amber-200 rounded-lg appearance-none cursor-pointer accent-white"
-              />
-
-              <div className="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
-                <span>25</span>
-                <span>35</span>
-                <span>45</span>
-                <span>50</span>
-                <span>60</span>
-                <span>70</span>
-                <span>80</span>
-                <span>95</span>
-              </div>
-            </div>
-
-            {/* Quick preset selector buttons (without numbers in label) */}
-            <div className="space-y-1.5 pt-1">
-              <div className="text-[10px] text-zinc-400 font-semibold">배전도 프리셋 태그</div>
-              <div className="flex flex-wrap gap-1.5">
-                {[
-                  { name: 'LIGHT', val: 85, roast: 'LIGHT Roast' },
-                  { name: 'CINNAMON', val: 75, roast: 'CINNAMON Roast' },
-                  { name: 'MEDIUM', val: 65, roast: 'MEDIUM Roast' },
-                  { name: 'HIGH', val: 65, roast: 'HIGH Roast' },
-                  { name: 'CITY', val: 55, roast: 'CITY Roast' },
-                  { name: 'FULL CITY', val: 47, roast: 'FULL CITY Roast' },
-                  { name: 'FRENCH', val: 38, roast: 'FRENCH Roast' },
-                  { name: 'ITALIAN', val: 28, roast: 'ITALIAN Roast' },
-                ].map((p) => {
-                  const currentDisplay = getAgtronRoastLevel(agtronNumber, customRoastName);
-                  const isSelected = currentDisplay === p.roast;
-                  return (
-                    <button
-                      key={p.name}
-                      type="button"
-                      onClick={() => {
-                        setAgtronNumber(p.val);
-                        setCustomRoastName(p.roast);
-                      }}
-                      className={`text-[10px] font-mono px-2.5 py-1 rounded-md border transition ${
-                        isSelected
-                          ? 'bg-amber-400 text-black font-extrabold border-amber-300 shadow-md'
-                          : 'bg-black/40 text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
-                      }`}
-                    >
-                      {p.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
           {/* Grind Size (Microns - Numbers only) & Total Time */}
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
@@ -504,70 +393,118 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
           {/* Step-by-Step Custom Phase Builder */}
           <div className="space-y-2 pt-2 border-t border-white/10">
             <div className="flex justify-between items-center">
-              <label className="block text-xs font-bold text-white">
-                단계별 추출 가이드 세팅
-              </label>
+              <div>
+                <label className="block text-xs font-bold text-white">
+                  단계별 추출 가이드 세팅
+                </label>
+                <p className="text-[10px] text-zinc-400">단계를 추가하면 이전 단계와 합산된 누적 시간 범위가 자동으로 표기됩니다.</p>
+              </div>
               <button
                 type="button"
                 onClick={handleAddStep}
-                className="text-xs text-zinc-200 hover:text-white font-semibold flex items-center gap-1 bg-black/60 border border-white/10 px-2.5 py-1 rounded-xl hover:border-white/30 transition backdrop-blur-md"
+                className="text-xs text-zinc-200 hover:text-white font-semibold flex items-center gap-1 bg-black/60 border border-white/10 px-2.5 py-1 rounded-xl hover:border-white/30 transition backdrop-blur-md shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>단계 추가</span>
               </button>
             </div>
 
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-              {steps.map((step, idx) => (
-                <div key={step.id || idx} className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 space-y-2">
-                  <div className="flex items-center justify-between gap-2">
+            <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+              {steps.map((step, idx) => {
+                const prevCumulativeSec = steps.slice(0, idx).reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0);
+                const currentSec = Number(step.durationSeconds) || 0;
+                const totalCumulativeSec = prevCumulativeSec + currentSec;
+
+                return (
+                  <div key={step.id || idx} className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <input
+                        type="text"
+                        value={step.phaseName}
+                        onChange={(e) => handleStepChange(idx, 'phaseName', e.target.value)}
+                        placeholder="단계 이름 (e.g. 뜸들이기)"
+                        className="bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-white font-bold w-1/3"
+                      />
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-zinc-400 shrink-0">누적물(g)</span>
+                          <input
+                            type="number"
+                            value={step.waterAmountGrams}
+                            onChange={(e) => handleStepChange(idx, 'waterAmountGrams', Number(e.target.value))}
+                            className="w-14 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
+                          />
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] text-zinc-400 shrink-0">시간(초)</span>
+                          <input
+                            type="number"
+                            value={step.durationSeconds}
+                            onChange={(e) => handleStepChange(idx, 'durationSeconds', Number(e.target.value))}
+                            className="w-14 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
+                          />
+                        </div>
+                        {steps.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveStep(idx)}
+                            className="text-zinc-400 hover:text-rose-400 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Time Accumulation Indicator */}
+                    <div className="flex items-center justify-between bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-[11px] font-mono">
+                      <span className="text-zinc-400 text-[10px]">
+                        구간: <strong className="text-zinc-200">{formatTimeDigital(prevCumulativeSec)} ~ {formatTimeDigital(totalCumulativeSec)}</strong>
+                      </span>
+                      <span className="font-bold text-white">
+                        누적 {formatSecondsToMinSec(totalCumulativeSec)}
+                      </span>
+                    </div>
+
                     <input
                       type="text"
-                      value={step.phaseName}
-                      onChange={(e) => handleStepChange(idx, 'phaseName', e.target.value)}
-                      placeholder="단계 이름 (e.g. 뜸들이기)"
-                      className="bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-white font-bold w-1/2"
+                      value={step.description}
+                      onChange={(e) => handleStepChange(idx, 'description', e.target.value)}
+                      placeholder="단계 설명 및 팁"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-zinc-300"
                     />
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-zinc-400">누적물(g)</span>
-                        <input
-                          type="number"
-                          value={step.waterAmountGrams}
-                          onChange={(e) => handleStepChange(idx, 'waterAmountGrams', Number(e.target.value))}
-                          className="w-16 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
-                        />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-zinc-400">시간(초)</span>
-                        <input
-                          type="number"
-                          value={step.durationSeconds}
-                          onChange={(e) => handleStepChange(idx, 'durationSeconds', Number(e.target.value))}
-                          className="w-16 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
-                        />
-                      </div>
-                      {steps.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveStep(idx)}
-                          className="text-zinc-400 hover:text-rose-400 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Total Steps Time Summary Card */}
+            {steps.length > 0 && (() => {
+              const totalStepsSec = steps.reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0);
+              return (
+                <div className="flex items-center justify-between bg-black/80 p-3 rounded-xl border border-white/20 text-xs shadow-md">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-white shrink-0" />
+                    <div>
+                      <span className="text-zinc-400 font-semibold">모든 단계 시간 총합: </span>
+                      <span className="text-white font-extrabold font-mono text-sm ml-1">
+                        {formatSecondsToMinSec(totalStepsSec)} ({formatTimeDigital(totalStepsSec)})
+                      </span>
                     </div>
                   </div>
-                  <input
-                    type="text"
-                    value={step.description}
-                    onChange={(e) => handleStepChange(idx, 'description', e.target.value)}
-                    placeholder="단계 설명 및 팁"
-                    className="w-full bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-zinc-300"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMinutes(Math.floor(totalStepsSec / 60));
+                      setSeconds(totalStepsSec % 60);
+                    }}
+                    className="text-[10px] font-bold text-black bg-gradient-to-r from-white to-zinc-300 hover:brightness-110 px-2.5 py-1 rounded-lg transition shadow shrink-0"
+                  >
+                    목표 시간에 적용
+                  </button>
                 </div>
-              ))}
-            </div>
+              );
+            })()}
           </div>
 
           {/* Description */}

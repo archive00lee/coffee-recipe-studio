@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { 
   ClipboardCheck, Plus, Search, Star, Trash2, 
-  Coffee, Tag, ArrowUpRight, Sparkles, Edit3
+  Coffee, Tag, ArrowUpRight, Sparkles, Edit3, Flame
 } from 'lucide-react';
-import { CoffeeRecipe, BrewEvaluation } from '../types';
+import { CoffeeRecipe, BrewEvaluation, getAgtronRoastLevel } from '../types';
 
 interface EvaluationSectionProps {
   evaluations: BrewEvaluation[];
@@ -64,7 +64,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
     <div className="space-y-6 animate-fade-in">
       
       {/* Top Hero Banner */}
-      <div className="bg-gradient-to-br from-zinc-900/80 via-zinc-950/70 to-black/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#030303] via-zinc-900 to-[#030303] backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             SENSORY LOG
@@ -86,7 +86,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
 
           <button
             onClick={openAddModal}
-            className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.15)] transition shrink-0 active:scale-95"
+            className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] transition shrink-0 active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>새 평가 작성</span>
@@ -203,8 +203,9 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                 <div className="flex items-center gap-2 text-xs bg-black/60 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
                   <Coffee className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                   <span className="font-semibold text-zinc-200 truncate">{item.beanName}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-zinc-300 ml-auto shrink-0 border border-white/20 font-medium">
-                    {item.roastLevel}
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-white ml-auto shrink-0 border border-white/20 font-mono font-bold flex items-center gap-1">
+                    <Flame className="w-2.5 h-2.5 text-white" />
+                    <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevel)})</span>
                   </span>
                 </div>
 

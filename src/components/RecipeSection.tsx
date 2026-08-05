@@ -56,7 +56,7 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={openModal}
-            className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black px-4 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.15)] font-extrabold text-xs sm:text-sm active:scale-95"
+            className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] px-4 py-2 rounded-xl transition shadow-[0_0_20px_rgba(255,255,255,0.2)] font-extrabold text-xs sm:text-sm active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span>레시피 추가</span>
@@ -151,10 +151,6 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
                         {item.orientation}
                       </span>
                     )}
-                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                      <Flame className="w-2.5 h-2.5 text-amber-400" />
-                      <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevelName)})</span>
-                    </span>
                   </div>
 
                   <button
@@ -265,8 +261,8 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
 
       {/* Delete Confirmation Modal */}
       {deletingId !== null && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-white/20 max-w-sm w-full p-6 rounded-2xl space-y-4 shadow-2xl">
+        <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 max-w-sm w-full p-6 rounded-2xl space-y-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] ring-1 ring-white/10">
             <h3 className="text-lg font-bold text-white">레시피 삭제</h3>
             <p className="text-xs text-zinc-300">
               정말로 이 레시피를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
@@ -283,7 +279,7 @@ export const RecipeSection: React.FC<RecipeSectionProps> = ({
                   deleteRecipe(deletingId);
                   setDeletingId(null);
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-white to-zinc-200 text-black hover:brightness-110 text-xs font-extrabold rounded-lg shadow transition"
+                className="px-4 py-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] hover:brightness-110 text-xs font-extrabold rounded-lg shadow transition"
               >
                 삭제하기
               </button>

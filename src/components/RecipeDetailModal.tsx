@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered, Flame, Edit3 } from 'lucide-react';
-import { CoffeeRecipe, getAgtronRoastLevel } from '../types';
+import { X, Copy, Check, Thermometer, Sliders, Clock, Scale, Coffee, ListOrdered, Edit3 } from 'lucide-react';
+import { CoffeeRecipe, formatSecondsToMinSec, formatTimeDigital } from '../types';
 
 interface RecipeDetailModalProps {
   recipe: CoffeeRecipe | null;
@@ -17,9 +17,6 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
 
   if (!recipe) return null;
 
-  const agtron = recipe.agtronNumber ?? 55;
-  const roastLevel = getAgtronRoastLevel(agtron, recipe.roastLevelName);
-
   const handleCopy = () => {
     const text = `[L coffee studio 레시피] ${recipe.title}\n` +
       `• 추출도구: ${recipe.brewMethod}\n` +
@@ -27,7 +24,6 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
       (recipe.capType ? `• 캡: ${recipe.capType}\n` : '') +
       (recipe.orientation ? `• 추출방향: ${recipe.orientation}\n` : '') +
       `• 비율: ${recipe.ratioText}\n` +
-      `• 원두 배전도: Agtron No. ${agtron} (${roastLevel})\n` +
       `• 물 온도: ${recipe.waterTempCelsius}°C\n` +
       `• 분쇄도: ${recipe.grindSizeMicrons} μm\n` +
       `• 목표 시간: ${Math.floor(recipe.totalTimeSeconds / 60)}분 ${recipe.totalTimeSeconds % 60}초\n` +
@@ -43,8 +39,8 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
   ).toFixed(1);
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in overflow-y-auto">
-      <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-950/90 to-black/95 backdrop-blur-2xl border border-white/20 w-full max-w-xl rounded-3xl p-6 shadow-2xl space-y-6 my-8 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in overflow-y-auto">
+      <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 w-full max-w-xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-6 my-8 max-h-[90vh] overflow-y-auto ring-1 ring-white/10">
         
         {/* Modal Header */}
         <div className="flex justify-between items-start border-b border-white/10 pb-4">
@@ -68,9 +64,6 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
                   방향: {recipe.orientation}
                 </span>
               )}
-              <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/30">
-                Agtron {agtron} ({roastLevel})
-              </span>
             </div>
             <h3 className="text-xl font-extrabold text-white mt-2 tracking-tight">{recipe.title}</h3>
           </div>
@@ -83,7 +76,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
         </div>
 
         {/* Recipe Spec Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
             <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
               <Scale className="w-3.5 h-3.5 text-white" />
@@ -93,17 +86,6 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
               {recipe.beanAmountGrams}g / {recipe.waterAmountMl}ml
             </div>
             <div className="text-[10px] text-zinc-400 mt-0.5 font-mono">비율 1:{calculatedRatio}</div>
-          </div>
-
-          <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-            <div className="text-[10px] text-zinc-400 flex items-center gap-1 mb-1">
-              <Flame className="w-3.5 h-3.5 text-amber-400" />
-              <span>배전도</span>
-            </div>
-            <div className="text-xs font-bold text-amber-300 font-mono truncate">
-              Agtron {agtron}
-            </div>
-            <div className="text-[10px] text-zinc-300 font-bold mt-0.5 truncate">{roastLevel}</div>
           </div>
 
           <div className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10">
@@ -134,7 +116,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
               <span>목표 시간</span>
             </div>
             <div className="text-xs font-bold text-zinc-100 font-mono">
-              {Math.floor(recipe.totalTimeSeconds / 60)}분 {recipe.totalTimeSeconds % 60}초
+              {formatSecondsToMinSec(recipe.totalTimeSeconds)}
             </div>
             <div className="text-[10px] text-zinc-400 mt-0.5">추출 타임</div>
           </div>
@@ -153,41 +135,68 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
 
         {/* Step by Step Breakdown */}
         {recipe.steps && recipe.steps.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
-              <ListOrdered className="w-4 h-4 text-white" />
-              <span>단계별 상세 가이드</span>
-            </h4>
+          <div className="space-y-3 pt-2 border-t border-white/10">
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-zinc-200 flex items-center gap-1.5">
+                <ListOrdered className="w-4 h-4 text-white" />
+                <span>단계별 상세 가이드 및 누적 타임라인</span>
+              </h4>
+              <span className="text-[11px] font-mono text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/20 font-bold">
+                총합 {formatSecondsToMinSec(recipe.steps.reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0))}
+              </span>
+            </div>
 
             <div className="space-y-2">
-              {recipe.steps.map((step, index) => (
-                <div
-                  key={step.id || index}
-                  className="bg-black/60 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 flex items-start justify-between gap-3"
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-r from-white to-zinc-300 text-black text-xs font-mono font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <div className="text-xs font-bold text-white flex items-center gap-2">
-                        <span>{step.phaseName}</span>
-                        {step.waterAmountGrams > 0 && (
-                          <span className="text-[10px] font-mono bg-white/10 text-zinc-200 px-1.5 py-0.2 rounded border border-white/20">
-                            누적 물: {step.waterAmountGrams}g
-                          </span>
-                        )}
+              {recipe.steps.map((step, index) => {
+                const prevCumulativeSec = recipe.steps!.slice(0, index).reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0);
+                const currentSec = Number(step.durationSeconds) || 0;
+                const totalCumulativeSec = prevCumulativeSec + currentSec;
+
+                return (
+                  <div
+                    key={step.id || index}
+                    className="bg-black/60 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 space-y-2"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <span className="w-5 h-5 rounded-full bg-gradient-to-r from-white to-zinc-300 text-black text-xs font-mono font-extrabold flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                          {index + 1}
+                        </span>
+                        <div>
+                          <div className="text-xs font-bold text-white flex items-center gap-2">
+                            <span>{step.phaseName}</span>
+                            {step.waterAmountGrams > 0 && (
+                              <span className="text-[10px] font-mono bg-white/10 text-zinc-200 px-1.5 py-0.2 rounded border border-white/20">
+                                누적 물: {step.waterAmountGrams}g
+                              </span>
+                            )}
+                          </div>
+                          {step.description && (
+                            <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                              {step.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
-                        {step.description}
-                      </p>
+
+                      <div className="text-right shrink-0">
+                        <span className="text-xs font-mono text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/20 font-bold block">
+                          +{formatSecondsToMinSec(currentSec)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-[11px] font-mono">
+                      <span className="text-zinc-400 text-[10px]">
+                        추출 구간: <strong className="text-zinc-200">{formatTimeDigital(prevCumulativeSec)} ~ {formatTimeDigital(totalCumulativeSec)}</strong>
+                      </span>
+                      <span className="text-white font-bold">
+                        누적 {formatSecondsToMinSec(totalCumulativeSec)} ({formatTimeDigital(totalCumulativeSec)})
+                      </span>
                     </div>
                   </div>
-                  <span className="text-xs font-mono text-white bg-white/10 px-2 py-0.5 rounded-lg border border-white/20 shrink-0">
-                    {step.durationSeconds}초
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { CoffeeRecipe, BrewEvaluation } from '../types';
+import { CoffeeRecipe, BrewEvaluation, BeanInfo } from '../types';
 
 const rawUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const cleanUrl = rawUrl.replace(/\/+(rest\/v1.*)?$/, '');
@@ -370,3 +370,128 @@ export async function deleteEvaluationFromSupabase(id: number): Promise<boolean>
     return false;
   }
 }
+
+// ------------------------------------
+// Bean Management (원두 정보)
+// ------------------------------------
+
+export const INITIAL_BEANS: BeanInfo[] = [];
+
+export function mapRowToBean(row: any): BeanInfo {
+  let notes = row.flavor_notes || row.flavorNotes;
+  if (typeof notes === 'string') {
+    try {
+      notes = JSON.parse(notes);
+    } catch (e) {
+      notes = [];
+    }
+  }
+  return {
+    id: Number(row.id),
+    name: row.name || '',
+    roastery: row.roastery || '',
+    origin: row.origin || '',
+    agtronNumber: Number(row.agtron_number ?? row.agtronNumber ?? 65),
+    roastLevel: row.roast_level || row.roastLevel || 'MEDIUM Roast',
+    price: Number(row.price ?? 0),
+    weightGrams: Number(row.weight_grams ?? row.weightGrams ?? 200),
+    purchaseUrl: row.purchase_url || row.purchaseUrl || '',
+    flavorNotes: Array.isArray(notes) ? notes : [],
+    description: row.description || '',
+    createdAt: row.created_at || row.createdAt || new Date().toISOString().split('T')[0],
+  };
+}
+
+export async function fetchBeansFromSupabase(): Promise<BeanInfo[] | null> {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.from('beans').select('*').order('id', { ascending: false });
+    if (error) {
+      console.warn('Supabase fetch beans error:', error.message);
+      return null;
+    }
+    if (data && Array.isArray(data)) {
+      return data.map(mapRowToBean);
+    }
+    return null;
+  } catch (err) {
+    console.warn('Supabase fetch beans exception:', err);
+    return null;
+  }
+}
+
+export async function insertBeanToSupabase(bean: BeanInfo): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+
+  const snakePayload: Record<string, any> = {
+    id: bean.id,
+    name: bean.name,
+    roastery: bean.roastery,
+    origin: bean.origin,
+    agtron_number: bean.agtronNumber,
+    roast_level: bean.roastLevel,
+    price: bean.price,
+    weight_grams: bean.weightGrams,
+    purchase_url: bean.purchaseUrl,
+    flavor_notes: JSON.stringify(bean.flavorNotes || []),
+    description: bean.description,
+    created_at: bean.createdAt,
+  };
+
+  try {
+    const { error } = await supabase.from('beans').insert([snakePayload]);
+    if (error) {
+      console.warn('Supabase insert bean error:', error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('Supabase insert bean exception:', err);
+    return { success: false, error: err };
+  }
+}
+
+export async function updateBeanInSupabase(bean: BeanInfo): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+
+  const snakePayload: Record<string, any> = {
+    name: bean.name,
+    roastery: bean.roastery,
+    origin: bean.origin,
+    agtron_number: bean.agtronNumber,
+    roast_level: bean.roastLevel,
+    price: bean.price,
+    weight_grams: bean.weightGrams,
+    purchase_url: bean.purchaseUrl,
+    flavor_notes: JSON.stringify(bean.flavorNotes || []),
+    description: bean.description,
+  };
+
+  try {
+    const { error } = await supabase.from('beans').update(snakePayload).eq('id', bean.id);
+    if (error) {
+      console.warn('Supabase update bean error:', error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('Supabase update bean exception:', err);
+    return { success: false, error: err };
+  }
+}
+
+export async function deleteBeanFromSupabase(id: number): Promise<boolean> {
+  if (!supabase) return false;
+  try {
+    const { error } = await supabase.from('beans').delete().eq('id', id);
+    if (error) {
+      console.warn('Supabase delete bean error:', error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('Supabase delete bean exception:', err);
+    return false;
+  }
+}
+

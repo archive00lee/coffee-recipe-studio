@@ -3,10 +3,12 @@ import { Header } from './components/Header';
 import { HomeSection } from './components/HomeSection';
 import { RecipeSection } from './components/RecipeSection';
 import { EvaluationSection } from './components/EvaluationSection';
+import { BeanSection } from './components/BeanSection';
 import { RecipeDetailModal } from './components/RecipeDetailModal';
 import { RecipeFormModal } from './components/RecipeFormModal';
 import { EvaluationFormModal } from './components/EvaluationFormModal';
-import { CoffeeRecipe, BrewEvaluation } from './types';
+import { BeanFormModal } from './components/BeanFormModal';
+import { CoffeeRecipe, BrewEvaluation, BeanInfo } from './types';
 import {
   isSupabaseConfigured,
   fetchRecipesFromSupabase,
@@ -18,19 +20,27 @@ import {
   insertEvaluationToSupabase,
   updateEvaluationInSupabase,
   deleteEvaluationFromSupabase,
+  INITIAL_BEANS,
+  fetchBeansFromSupabase,
+  insertBeanToSupabase,
+  updateBeanInSupabase,
+  deleteBeanFromSupabase,
 } from './lib/supabase';
 import { Cloud, Database, AlertCircle } from 'lucide-react';
 
 export default function App() {
   const [recipes, setRecipes] = useState<CoffeeRecipe[]>([]);
   const [evaluations, setEvaluations] = useState<BrewEvaluation[]>([]);
+  const [beans, setBeans] = useState<BeanInfo[]>(INITIAL_BEANS);
 
-  const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation' | 'bean'>('home');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddEvalModalOpen, setIsAddEvalModalOpen] = useState(false);
+  const [isAddBeanModalOpen, setIsAddBeanModalOpen] = useState(false);
 
   const [editingRecipe, setEditingRecipe] = useState<CoffeeRecipe | null>(null);
   const [editingEvaluation, setEditingEvaluation] = useState<BrewEvaluation | null>(null);
+  const [editingBean, setEditingBean] = useState<BeanInfo | null>(null);
 
   const [selectedRecipeForDetail, setSelectedRecipeForDetail] = useState<CoffeeRecipe | null>(null);
   const [isCloudConnected, setIsCloudConnected] = useState<boolean | null>(null);
@@ -46,9 +56,10 @@ export default function App() {
       }
 
       try {
-        const [cloudRecipes, cloudEvals] = await Promise.all([
+        const [cloudRecipes, cloudEvals, cloudBeans] = await Promise.all([
           fetchRecipesFromSupabase(),
           fetchEvaluationsFromSupabase(),
+          fetchBeansFromSupabase(),
         ]);
 
         if (!isMounted) return;
@@ -63,6 +74,10 @@ export default function App() {
         if (cloudEvals !== null) {
           setEvaluations(cloudEvals);
         }
+
+        if (cloudBeans !== null && cloudBeans.length > 0) {
+          setBeans(cloudBeans);
+        }
       } catch (err) {
         console.error('Failed to load data from Supabase:', err);
         if (isMounted) setIsCloudConnected(false);
@@ -76,7 +91,7 @@ export default function App() {
     };
   }, []);
 
-  // Fetch recipes from DB
+  // Fetch functions
   const fetchRecipes = async () => {
     if (!isSupabaseConfigured) return;
     const cloudRecipes = await fetchRecipesFromSupabase();
@@ -85,12 +100,19 @@ export default function App() {
     }
   };
 
-  // Fetch evaluations from DB
   const fetchEvaluations = async () => {
     if (!isSupabaseConfigured) return;
     const cloudEvals = await fetchEvaluationsFromSupabase();
     if (cloudEvals !== null) {
       setEvaluations(cloudEvals);
+    }
+  };
+
+  const fetchBeans = async () => {
+    if (!isSupabaseConfigured) return;
+    const cloudBeans = await fetchBeansFromSupabase();
+    if (cloudBeans !== null && cloudBeans.length > 0) {
+      setBeans(cloudBeans);
     }
   };
 
@@ -113,6 +135,16 @@ export default function App() {
   const handleOpenEditEvalModal = (evaluation: BrewEvaluation) => {
     setEditingEvaluation(evaluation);
     setIsAddEvalModalOpen(true);
+  };
+
+  const handleOpenAddBeanModal = () => {
+    setEditingBean(null);
+    setIsAddBeanModalOpen(true);
+  };
+
+  const handleOpenEditBeanModal = (bean: BeanInfo) => {
+    setEditingBean(bean);
+    setIsAddBeanModalOpen(true);
   };
 
   // Handlers
@@ -239,6 +271,56 @@ export default function App() {
     }
   };
 
+  const handleSaveBean = async (beanData: Omit<BeanInfo, 'id' | 'createdAt'> & { id?: number }) => {
+    if (editingBean) {
+      // Edit Mode
+      const updatedBean: BeanInfo = {
+        ...editingBean,
+        ...beanData,
+      };
+
+      if (isSupabaseConfigured) {
+        const result = await updateBeanInSupabase(updatedBean);
+        if (result.success) {
+          await fetchBeans();
+        } else {
+          console.error('Supabase Bean Update Error:', result.error);
+          setBeans((prev) => prev.map((b) => (b.id === updatedBean.id ? updatedBean : b)));
+        }
+      } else {
+        setBeans((prev) => prev.map((b) => (b.id === updatedBean.id ? updatedBean : b)));
+      }
+      setEditingBean(null);
+    } else {
+      // Create Mode
+      const newBean: BeanInfo = {
+        ...beanData,
+        id: Date.now(),
+        createdAt: new Date().toISOString().split('T')[0],
+      };
+
+      if (isSupabaseConfigured) {
+        const result = await insertBeanToSupabase(newBean);
+        if (result.success) {
+          await fetchBeans();
+        } else {
+          console.error('Supabase Bean Insert Error:', result.error);
+          setBeans((prev) => [newBean, ...prev]);
+        }
+      } else {
+        setBeans((prev) => [newBean, ...prev]);
+      }
+    }
+  };
+
+  const handleDeleteBean = async (id: number) => {
+    setBeans((prev) => prev.filter((item) => item.id !== id));
+
+    if (isSupabaseConfigured) {
+      await deleteBeanFromSupabase(id);
+    }
+  };
+
   const favoriteCount = recipes.filter((r) => r.isFavorite).length;
 
   return (
@@ -256,6 +338,7 @@ export default function App() {
           openAddModal={handleOpenAddRecipeModal}
           recipeCount={recipes.length}
           evaluationCount={evaluations.length}
+          beanCount={beans.length}
           favoriteCount={favoriteCount}
         />
 
@@ -298,6 +381,15 @@ export default function App() {
             />
           )}
 
+          {activeTab === 'bean' && (
+            <BeanSection
+              beans={beans}
+              onOpenAddModal={handleOpenAddBeanModal}
+              onOpenEditModal={handleOpenEditBeanModal}
+              onDeleteBean={handleDeleteBean}
+            />
+          )}
+
           {activeTab === 'evaluation' && (
             <EvaluationSection
               evaluations={evaluations}
@@ -317,7 +409,7 @@ export default function App() {
               <span className="text-white font-bold tracking-tight">L coffee studio</span> — 정밀한 커피 레시피를 기록하고 관리하는 아카이브
             </div>
             <div className="text-[11px] font-mono text-zinc-400 flex items-center gap-2">
-              <span>{recipes.length}개의 레시피 · {evaluations.length}개의 추출평가 보관 중</span>
+              <span>{recipes.length}개의 레시피 · {beans.length}개의 원두 · {evaluations.length}개의 센서리 보관 중</span>
               {isCloudConnected && (
                 <span className="inline-flex items-center gap-1 text-emerald-400 font-sans">
                   <Database className="w-3 h-3" /> Supabase
@@ -346,6 +438,17 @@ export default function App() {
         initialData={editingRecipe}
       />
 
+      {/* Bean Form Modal */}
+      <BeanFormModal
+        isOpen={isAddBeanModalOpen}
+        onClose={() => {
+          setIsAddBeanModalOpen(false);
+          setEditingBean(null);
+        }}
+        onSubmit={handleSaveBean}
+        initialData={editingBean}
+      />
+
       {/* Evaluation Form Modal */}
       <EvaluationFormModal
         isOpen={isAddEvalModalOpen}
@@ -354,6 +457,7 @@ export default function App() {
           setEditingEvaluation(null);
         }}
         recipes={recipes}
+        beans={beans}
         onSubmit={handleSaveEvaluation}
         initialData={editingEvaluation}
       />

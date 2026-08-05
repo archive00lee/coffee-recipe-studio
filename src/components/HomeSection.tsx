@@ -19,7 +19,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Hero Welcome & Archive Description */}
-      <div className="grid md:grid-cols-12 gap-8 items-center bg-gradient-to-br from-zinc-900/80 via-zinc-950/70 to-black/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden group">
+      <div className="grid md:grid-cols-12 gap-8 items-center bg-gradient-to-br from-[#030303] via-zinc-900 to-[#030303] backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden group">
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition duration-700"></div>
 
         <div className="md:col-span-8 space-y-4 relative z-10">
@@ -34,7 +34,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               onClick={onNavigateToRecipes}
-              className="px-6 py-3 bg-gradient-to-r from-white via-zinc-200 to-zinc-300 hover:brightness-110 text-black font-extrabold text-sm rounded-xl transition shadow-[0_0_25px_rgba(255,255,255,0.2)] flex items-center space-x-2 active:scale-95"
+              className="px-6 py-3 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] font-extrabold text-sm rounded-xl transition shadow-[0_0_25px_rgba(255,255,255,0.2)] flex items-center space-x-2 active:scale-95"
             >
               <span>레시피 둘러보기 ({recipes.length})</span>
               <ArrowRight className="w-4 h-4" />
@@ -129,8 +129,8 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
                           {item.orientation}
                         </span>
                       )}
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-950/60 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                        <Flame className="w-2.5 h-2.5 text-amber-400" />
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/20 flex items-center gap-1">
+                        <Flame className="w-2.5 h-2.5 text-white" />
                         <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevelName)})</span>
                       </span>
                     </div>

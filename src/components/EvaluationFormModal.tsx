@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Star, ClipboardCheck, Sparkles, Tag, Edit3 } from 'lucide-react';
-import { CoffeeRecipe, BrewEvaluation } from '../types';
+import { X, Star, ClipboardCheck, Sparkles, Tag, Edit3, Flame, Package } from 'lucide-react';
+import { CoffeeRecipe, BrewEvaluation, BeanInfo, getAgtronRoastLevel } from '../types';
 
 interface EvaluationFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   recipes: CoffeeRecipe[];
+  beans?: BeanInfo[];
   onSubmit: (evaluation: Omit<BrewEvaluation, 'id'>) => void;
   initialRecipeId?: number;
   initialData?: BrewEvaluation | null;
@@ -16,14 +17,11 @@ const PREDEFINED_NOTES = [
   '밀크초콜릿', '카라멜', '견과류', '바닐라', '다크초콜릿', '허브', '꿀'
 ];
 
-const ROAST_LEVELS: Array<BrewEvaluation['roastLevel']> = [
-  '약배전', '중약배전', '중배전', '중강배전', '강배전'
-];
-
 export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   isOpen,
   onClose,
   recipes,
+  beans = [],
   onSubmit,
   initialRecipeId,
   initialData,
@@ -41,7 +39,8 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   );
 
   const [beanName, setBeanName] = useState('');
-  const [roastLevel, setRoastLevel] = useState<BrewEvaluation['roastLevel']>('약배전');
+  const [agtronNumber, setAgtronNumber] = useState<number>(65);
+  const [customRoastName, setCustomRoastName] = useState<string>('');
   const [rating, setRating] = useState<number>(5);
   
   // Flavor metrics (1~5)
@@ -65,7 +64,8 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
         setCustomRecipeTitle(initialData.recipeTitle || '');
         setBrewMethod(initialData.brewMethod || '에어로프레스');
         setBeanName(initialData.beanName || '');
-        setRoastLevel(initialData.roastLevel || '약배전');
+        setAgtronNumber(initialData.agtronNumber ?? 65);
+        setCustomRoastName(initialData.roastLevel || '');
         setRating(initialData.rating || 5);
         setAcidity(initialData.acidity || 3);
         setSweetness(initialData.sweetness || 3);
@@ -81,7 +81,8 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
         setCustomRecipeTitle(defaultRec ? defaultRec.title : '');
         setBrewMethod(defaultRec ? defaultRec.brewMethod : '에어로프레스');
         setBeanName('');
-        setRoastLevel('약배전');
+        setAgtronNumber(65);
+        setCustomRoastName('');
         setRating(5);
         setAcidity(3);
         setSweetness(3);
@@ -133,13 +134,15 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const recipeTitleToSave = selectedRecipeId === 0 ? (customRecipeTitle.trim() || '자유 추출 레시피') : customRecipeTitle;
+    const computedRoastLevel = getAgtronRoastLevel(agtronNumber, customRoastName);
 
     onSubmit({
       recipeId: selectedRecipeId,
       recipeTitle: recipeTitleToSave,
       brewMethod,
       beanName: beanName.trim() || '원두 미지정',
-      roastLevel,
+      agtronNumber,
+      roastLevel: computedRoastLevel,
       rating,
       acidity,
       sweetness,
@@ -182,14 +185,14 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-gradient-to-br from-zinc-900/90 via-zinc-950/90 to-black/95 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+      <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-5 my-8 max-h-[90vh] overflow-y-auto ring-1 ring-white/10">
         
         {/* Header */}
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-white backdrop-blur-md shadow-md">
-              {initialData ? <Edit3 className="w-4 h-4" /> : <ClipboardCheck className="w-4 h-4" />}
+          <div className="flex items-center space-x-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white via-zinc-300 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] backdrop-blur-md shadow-md">
+              {initialData ? <Edit3 className="w-4 h-4 stroke-[2.5]" /> : <ClipboardCheck className="w-4 h-4 stroke-[2.5]" />}
             </div>
             <h3 className="text-lg font-bold text-white tracking-tight">
               {initialData ? '추출 평가 수정' : '추출 성패 & 센서리 평가 작성'}
@@ -240,7 +243,41 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
           </div>
 
           {/* Bean Name & Roast Level */}
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className="space-y-3">
+            {beans.length > 0 && (
+              <div>
+                <label className="block text-xs font-semibold text-white mb-1 flex items-center gap-1">
+                  <Package className="w-3.5 h-3.5" />
+                  <span>보유 원두에서 불러오기 (선택)</span>
+                </label>
+                <select
+                  onChange={(e) => {
+                    const selectedId = Number(e.target.value);
+                    if (selectedId) {
+                      const found = beans.find(b => b.id === selectedId);
+                      if (found) {
+                        setBeanName(found.name);
+                        setAgtronNumber(found.agtronNumber);
+                        setCustomRoastName(found.roastLevel);
+                        if (found.flavorNotes && found.flavorNotes.length > 0) {
+                          setTastingNotes(prev => Array.from(new Set([...prev, ...found.flavorNotes!])));
+                        }
+                      }
+                    }
+                  }}
+                  defaultValue=""
+                  className="w-full bg-white/10 border border-white/20 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-white/50 font-semibold"
+                >
+                  <option value="" disabled className="bg-[#030303] text-zinc-400">-- 등록된 원두 목록에서 바로 선택 --</option>
+                  {beans.map(b => (
+                    <option key={b.id} value={b.id} className="bg-[#030303] text-white">
+                      [{b.roastery}] {b.name} (Agtron {b.agtronNumber})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-semibold text-zinc-300 mb-1">
                 원두 이름 / 원산지
@@ -253,22 +290,109 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                 className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
               />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1">
-                배전도 (로스팅 정도)
+          {/* Agtron No. Roast Level Slider Section */}
+          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-3">
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-white" />
+                <span>원두 배전도 (Agtron No.)</span>
               </label>
-              <select
-                value={roastLevel}
-                onChange={(e) => setRoastLevel(e.target.value as BrewEvaluation['roastLevel'])}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
-              >
-                {ROAST_LEVELS.map((rl) => (
-                  <option key={rl} value={rl}>
-                    {rl}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-lg border border-white/20 text-white text-xs font-mono font-bold">
+                  <span>Agtron No.</span>
+                  <input
+                    type="number"
+                    min="25"
+                    max="95"
+                    value={agtronNumber || ''}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setAgtronNumber(val);
+                      if (val < 60 || val > 70) {
+                        setCustomRoastName('');
+                      }
+                    }}
+                    onBlur={() => {
+                      let val = agtronNumber;
+                      if (!val || val < 25) val = 25;
+                      if (val > 95) val = 95;
+                      setAgtronNumber(val);
+                    }}
+                    className="w-12 bg-black/60 border border-white/30 rounded px-1 py-0.5 text-center text-white font-bold font-mono focus:outline-none focus:border-white text-xs"
+                  />
+                </div>
+                <span className="text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/20">
+                  {getAgtronRoastLevel(agtronNumber, customRoastName)}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <input
+                type="range"
+                min="25"
+                max="95"
+                step="1"
+                value={agtronNumber}
+                onChange={(e) => {
+                  const val = Number(e.target.value);
+                  setAgtronNumber(val);
+                  if (val < 60 || val > 70) {
+                    setCustomRoastName('');
+                  }
+                }}
+                className="w-full h-2 bg-gradient-to-r from-zinc-800 via-zinc-400 to-white rounded-lg appearance-none cursor-pointer accent-white"
+              />
+
+              <div className="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
+                <span>25</span>
+                <span>35</span>
+                <span>45</span>
+                <span>50</span>
+                <span>60</span>
+                <span>70</span>
+                <span>80</span>
+                <span>95</span>
+              </div>
+            </div>
+
+            {/* Quick preset selector buttons */}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-[10px] text-zinc-400 font-semibold">배전도 프리셋 태그</div>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { name: 'LIGHT', val: 85, roast: 'LIGHT Roast' },
+                  { name: 'CINNAMON', val: 75, roast: 'CINNAMON Roast' },
+                  { name: 'MEDIUM', val: 65, roast: 'MEDIUM Roast' },
+                  { name: 'HIGH', val: 65, roast: 'HIGH Roast' },
+                  { name: 'CITY', val: 55, roast: 'CITY Roast' },
+                  { name: 'FULL CITY', val: 47, roast: 'FULL CITY Roast' },
+                  { name: 'FRENCH', val: 38, roast: 'FRENCH Roast' },
+                  { name: 'ITALIAN', val: 28, roast: 'ITALIAN Roast' },
+                ].map((p) => {
+                  const currentDisplay = getAgtronRoastLevel(agtronNumber, customRoastName);
+                  const isSelected = currentDisplay === p.roast;
+                  return (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => {
+                        setAgtronNumber(p.val);
+                        setCustomRoastName(p.roast);
+                      }}
+                      className={`text-[10px] font-mono px-2.5 py-1 rounded-md border transition ${
+                        isSelected
+                          ? 'bg-white text-black font-extrabold border-white shadow-md'
+                          : 'bg-black/40 text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
+                      }`}
+                    >
+                      {p.name}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
