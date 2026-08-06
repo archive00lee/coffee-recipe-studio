@@ -142,3 +142,18 @@ export interface BrewEvaluation {
   memo: string; // 종합 평 및 다음 추출 피드백
 }
 
+export interface GrindRecord {
+  id: string;
+  grinderId: string;
+  grinderName: string;
+  calcMode: 'micronToClick' | 'clickToMicron';
+  inputMicron: number;
+  calculatedClick: number;
+  calculatedMicron: number;
+  unitName: string;
+  brewMethodRecommendation: string;
+  roastLevel?: string;
+  notes?: string;
+  createdAt: string;
+}
+

@@ -9,7 +9,7 @@ import { RecipeDetailModal } from './components/RecipeDetailModal';
 import { RecipeFormModal } from './components/RecipeFormModal';
 import { EvaluationFormModal } from './components/EvaluationFormModal';
 import { BeanFormModal } from './components/BeanFormModal';
-import { CoffeeRecipe, BrewEvaluation, BeanInfo } from './types';
+import { CoffeeRecipe, BrewEvaluation, BeanInfo, GrindRecord } from './types';
 import {
   isSupabaseConfigured,
   fetchRecipesFromSupabase,
@@ -26,6 +26,9 @@ import {
   insertBeanToSupabase,
   updateBeanInSupabase,
   deleteBeanFromSupabase,
+  fetchGrindRecordsFromSupabase,
+  insertGrindRecordToSupabase,
+  deleteGrindRecordFromSupabase,
 } from './lib/supabase';
 import { Cloud, Database, AlertCircle } from 'lucide-react';
 
@@ -33,6 +36,7 @@ export default function App() {
   const [recipes, setRecipes] = useState<CoffeeRecipe[]>([]);
   const [evaluations, setEvaluations] = useState<BrewEvaluation[]>([]);
   const [beans, setBeans] = useState<BeanInfo[]>(INITIAL_BEANS);
+  const [grindRecords, setGrindRecords] = useState<GrindRecord[]>([]);
 
   const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation' | 'bean' | 'grind'>('home');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,10 +61,11 @@ export default function App() {
       }
 
       try {
-        const [cloudRecipes, cloudEvals, cloudBeans] = await Promise.all([
+        const [cloudRecipes, cloudEvals, cloudBeans, cloudGrinds] = await Promise.all([
           fetchRecipesFromSupabase(),
           fetchEvaluationsFromSupabase(),
           fetchBeansFromSupabase(),
+          fetchGrindRecordsFromSupabase(),
         ]);
 
         if (!isMounted) return;
@@ -78,6 +83,10 @@ export default function App() {
 
         if (cloudBeans !== null && cloudBeans.length > 0) {
           setBeans(cloudBeans);
+        }
+
+        if (cloudGrinds !== null) {
+          setGrindRecords(cloudGrinds);
         }
       } catch (err) {
         console.error('Failed to load data from Supabase:', err);
@@ -114,6 +123,14 @@ export default function App() {
     const cloudBeans = await fetchBeansFromSupabase();
     if (cloudBeans !== null && cloudBeans.length > 0) {
       setBeans(cloudBeans);
+    }
+  };
+
+  const fetchGrindRecords = async () => {
+    if (!isSupabaseConfigured) return;
+    const cloudGrinds = await fetchGrindRecordsFromSupabase();
+    if (cloudGrinds !== null) {
+      setGrindRecords(cloudGrinds);
     }
   };
 
@@ -322,6 +339,33 @@ export default function App() {
     }
   };
 
+  const handleSaveGrindRecord = async (record: GrindRecord) => {
+    if (isSupabaseConfigured) {
+      const result = await insertGrindRecordToSupabase(record);
+      if (result.success) {
+        await fetchGrindRecords();
+      } else {
+        console.error('Supabase Grind Record Insert Error:', result.error);
+        alert(`분쇄도 기록 저장에 실패했습니다.\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+      }
+    } else {
+      setGrindRecords((prev) => [record, ...prev]);
+    }
+  };
+
+  const handleDeleteGrindRecord = async (id: string) => {
+    setGrindRecords((prev) => prev.filter((item) => item.id !== id));
+
+    if (isSupabaseConfigured) {
+      const result = await deleteGrindRecordFromSupabase(id);
+      if (!result.success) {
+        console.error('Supabase Grind Record Delete Error:', result.error);
+        alert(`분쇄도 기록 삭제에 실패했습니다.\n${result.error?.message || result.error || '알 수 없는 오류'}`);
+        await fetchGrindRecords();
+      }
+    }
+  };
+
   const favoriteCount = recipes.filter((r) => r.isFavorite).length;
 
   return (
@@ -403,7 +447,11 @@ export default function App() {
           )}
 
           {activeTab === 'grind' && (
-            <GrindSection />
+            <GrindSection
+              records={grindRecords}
+              onSaveRecord={handleSaveGrindRecord}
+              onDeleteRecord={handleDeleteGrindRecord}
+            />
           )}
         </main>
 

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { CoffeeRecipe, BrewEvaluation, BeanInfo } from '../types';
+import { CoffeeRecipe, BrewEvaluation, BeanInfo, GrindRecord } from '../types';
 
 const rawUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const cleanUrl = rawUrl.replace(/\/+(rest\/v1.*)?$/, '');
@@ -492,6 +492,91 @@ export async function deleteBeanFromSupabase(id: number): Promise<boolean> {
   } catch (err) {
     console.warn('Supabase delete bean exception:', err);
     return false;
+  }
+}
+
+// ------------------------------------
+// Grind Records Management (분쇄도 계산기 기록)
+// ------------------------------------
+
+export function mapRowToGrindRecord(row: any): GrindRecord {
+  return {
+    id: String(row.id),
+    grinderId: row.grinder_id || row.grinderId || '',
+    grinderName: row.grinder_name || row.grinderName || '',
+    calcMode: (row.calc_mode || row.calcMode || 'micronToClick') as 'micronToClick' | 'clickToMicron',
+    inputMicron: Number(row.input_micron ?? row.inputMicron ?? 0),
+    calculatedClick: Number(row.calculated_click ?? row.calculatedClick ?? 0),
+    calculatedMicron: Number(row.calculated_micron ?? row.calculatedMicron ?? 0),
+    unitName: row.unit_name || row.unitName || '클릭',
+    brewMethodRecommendation: row.brew_method_recommendation || row.brewMethodRecommendation || '',
+    roastLevel: row.roast_level || row.roastLevel || '',
+    notes: row.notes || '',
+    createdAt: row.created_at || row.createdAt || new Date().toISOString(),
+  };
+}
+
+export async function fetchGrindRecordsFromSupabase(): Promise<GrindRecord[] | null> {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase.from('grind_records').select('*').order('id', { ascending: false });
+    if (error) {
+      console.warn('Supabase fetch grind_records error:', error.message);
+      return null;
+    }
+    if (data && Array.isArray(data)) {
+      return data.map(mapRowToGrindRecord);
+    }
+    return null;
+  } catch (err) {
+    console.warn('Supabase fetch grind_records exception:', err);
+    return null;
+  }
+}
+
+export async function insertGrindRecordToSupabase(record: GrindRecord): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+
+  const snakePayload: Record<string, any> = {
+    id: record.id,
+    grinder_id: record.grinderId,
+    grinder_name: record.grinderName,
+    calc_mode: record.calcMode,
+    input_micron: record.inputMicron,
+    calculated_click: record.calculatedClick,
+    calculated_micron: record.calculatedMicron,
+    unit_name: record.unitName,
+    brew_method_recommendation: record.brewMethodRecommendation,
+    roast_level: record.roastLevel || '',
+    notes: record.notes || '',
+    created_at: record.createdAt,
+  };
+
+  try {
+    const { error } = await supabase.from('grind_records').insert([snakePayload]);
+    if (error) {
+      console.warn('Supabase insert grind_record error:', error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('Supabase insert grind_record exception:', err);
+    return { success: false, error: err };
+  }
+}
+
+export async function deleteGrindRecordFromSupabase(id: string): Promise<{ success: boolean; error?: any }> {
+  if (!supabase) return { success: false, error: 'Supabase client is not configured' };
+  try {
+    const { error } = await supabase.from('grind_records').delete().eq('id', id);
+    if (error) {
+      console.warn('Supabase delete grind_record error:', error.message);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.warn('Supabase delete grind_record exception:', err);
+    return { success: false, error: err };
   }
 }
 

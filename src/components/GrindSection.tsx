@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Sliders, Calculator, Bookmark, Plus, Trash2, ArrowRightLeft, Sparkles, Coffee, Info, Filter, ArrowRight, Check } from 'lucide-react';
+import { GrindRecord } from '../types';
 
 // Grinder specs definition for conversion formula
 export interface GrinderSpec {
@@ -106,21 +107,6 @@ export const GRINDER_SPECS: Record<string, GrinderSpec> = {
   },
 };
 
-export interface GrindRecord {
-  id: string;
-  grinderId: string;
-  grinderName: string;
-  calcMode: 'micronToClick' | 'clickToMicron';
-  inputMicron: number;
-  calculatedClick: number;
-  calculatedMicron: number;
-  unitName: string;
-  brewMethodRecommendation: string;
-  roastLevel?: string;
-  notes?: string;
-  createdAt: string;
-}
-
 // Recommend brew method based on micron size
 const getBrewMethodByMicron = (micron: number): { title: string; desc: string } => {
   if (micron <= 300) {
@@ -140,7 +126,17 @@ const getBrewMethodByMicron = (micron: number): { title: string; desc: string } 
   }
 };
 
-export const GrindSection: React.FC = () => {
+interface GrindSectionProps {
+  records?: GrindRecord[];
+  onSaveRecord?: (record: GrindRecord) => Promise<void> | void;
+  onDeleteRecord?: (id: string) => Promise<void> | void;
+}
+
+export const GrindSection: React.FC<GrindSectionProps> = ({
+  records = [],
+  onSaveRecord,
+  onDeleteRecord,
+}) => {
   // Calculator State
   const [selectedGrinderId, setSelectedGrinderId] = useState<string>('comandante');
   const [calcMode, setCalcMode] = useState<'micronToClick' | 'clickToMicron'>('micronToClick');
@@ -159,23 +155,6 @@ export const GrindSection: React.FC = () => {
 
   // History Filter
   const [historyFilterGrinder, setHistoryFilterGrinder] = useState<string>('all');
-
-  // Local Storage Records
-  const [records, setRecords] = useState<GrindRecord[]>(() => {
-    const saved = localStorage.getItem('coffee_grind_calc_records');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return [];
-      }
-    }
-    return [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('coffee_grind_calc_records', JSON.stringify(records));
-  }, [records]);
 
   // Current active grinder spec
   const currentSpec = GRINDER_SPECS[selectedGrinderId] || GRINDER_SPECS.comandante;
@@ -222,7 +201,7 @@ export const GrindSection: React.FC = () => {
   const brewRecommendation = getBrewMethodByMicron(resultMicron);
 
   // Save Record
-  const handleSaveRecord = () => {
+  const handleSaveRecord = async () => {
     const newRecord: GrindRecord = {
       id: Date.now().toString(),
       grinderId: selectedGrinderId,
@@ -244,13 +223,17 @@ export const GrindSection: React.FC = () => {
       }),
     };
 
-    setRecords([newRecord, ...records]);
+    if (onSaveRecord) {
+      await onSaveRecord(newRecord);
+    }
     setNotes('');
   };
 
-  const handleDeleteRecord = (id: string) => {
+  const handleDeleteRecord = async (id: string) => {
     if (confirm('이 계산 기록을 삭제하시겠습니까?')) {
-      setRecords(records.filter((r) => r.id !== id));
+      if (onDeleteRecord) {
+        await onDeleteRecord(id);
+      }
     }
   };
 
