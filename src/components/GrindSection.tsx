@@ -16,33 +16,33 @@ export interface GrinderSpec {
 export const GRINDER_SPECS: Record<string, GrinderSpec> = {
   comandante: {
     id: 'comandante',
-    name: '코만단테 C40 (표준)',
+    name: '코만단테 C40 표준',
     micronPerClick: 30,
     baseOffsetMicron: 120,
     unitName: '클릭',
     minSetting: 1,
     maxSetting: 40,
-    description: '1클릭 = 약 30μm 이동 (드립 22~28클릭)',
+    description: '[1클릭 = 약 30μm]',
   },
   comandanteRedClix: {
     id: 'comandanteRedClix',
-    name: '코만단테 C40 (Red Clix)',
+    name: '코만단테 C40 Red Clix',
     micronPerClick: 15,
     baseOffsetMicron: 120,
     unitName: '클릭',
     minSetting: 1,
     maxSetting: 80,
-    description: '1클릭 = 약 15μm 이동 (에스프레소 미세조절)',
+    description: '[1클릭 = 약 15μm]',
   },
   baratzaEncore: {
     id: 'baratzaEncore',
-    name: '바라짜 엔코 (Baratza Encore)',
+    name: '바라짜 엔코',
     micronPerClick: 40,
     baseOffsetMicron: 150,
     unitName: '단계',
     minSetting: 1,
     maxSetting: 40,
-    description: '1단계 = 약 40μm 이동 (드립 15~22단계)',
+    description: '[1단계 = 약 40μm]',
   },
   timemoreC2: {
     id: 'timemoreC2',
@@ -52,17 +52,17 @@ export const GRINDER_SPECS: Record<string, GrinderSpec> = {
     unitName: '클릭',
     minSetting: 6,
     maxSetting: 30,
-    description: '1클릭 = 약 31.5μm 이동 (드립 16~22클릭)',
+    description: '[1클릭 = 약 31.5μm]',
   },
   fellowOde2: {
     id: 'fellowOde2',
-    name: '펠로우 오드 v2 (Fellow Ode Gen 2)',
+    name: '펠로우 오드 v2',
     micronPerClick: 25,
     baseOffsetMicron: 200,
     unitName: '단계',
     minSetting: 1,
     maxSetting: 11,
-    description: '1단계당 약 25μm (드립 4~6단계)',
+    description: '[1단계 = 약 25μm]',
   },
   kMax: {
     id: 'kMax',
@@ -72,37 +72,37 @@ export const GRINDER_SPECS: Record<string, GrinderSpec> = {
     unitName: '클릭',
     minSetting: 1,
     maxSetting: 100,
-    description: '1클릭 = 약 22μm 이동 (드립 6.5~8.0)',
+    description: '[1클릭 = 약 22μm]',
   },
   leequip: {
     id: 'leequip',
-    name: '리큅 LCG-C2400 (41mm 코니컬 버)',
+    name: '리큅 LCG-C2400',
     micronPerClick: 21.87,
     baseOffsetMicron: 516.3, // 735 - 10 * 21.87
     unitName: '클릭',
     minSetting: 10,
     maxSetting: 45,
-    description: '10~45클릭 (10클릭 735㎛ ~ 45클릭 1500㎛)',
+    description: '[1클릭 = 약 21.87μm]',
   },
   ek43: {
     id: 'ek43',
-    name: '말코닉 EK43 (Mahlkönig EK43)',
+    name: '말코닉 EK43',
     micronPerClick: 70,
     baseOffsetMicron: 100,
     unitName: '단',
     minSetting: 1,
     maxSetting: 16,
-    description: '1단 = 약 70μm 이동 (드립 6.5~8.5단)',
+    description: '[1단 = 약 70μm]',
   },
   custom: {
     id: 'custom',
-    name: '직접 입력 (커스텀 그라인더)',
+    name: '직접 입력 (커스텀)',
     micronPerClick: 30,
     baseOffsetMicron: 100,
     unitName: '클릭',
     minSetting: 1,
     maxSetting: 100,
-    description: '1클릭 당 미크론 값을 직접 지정',
+    description: '[커스텀 수치 지정]',
   },
 };
 
@@ -295,7 +295,7 @@ export const GrindSection: React.FC = () => {
             >
               {Object.values(GRINDER_SPECS).map((spec) => (
                 <option key={spec.id} value={spec.id}>
-                  {spec.name} ({spec.description})
+                  {spec.name} {spec.description}
                 </option>
               ))}
             </select>
@@ -372,26 +372,6 @@ export const GrindSection: React.FC = () => {
                     {targetMicron} μm
                   </span>
                 </label>
-                <div className="flex gap-1.5 text-[11px]">
-                  <button
-                    onClick={() => setTargetMicron(250)}
-                    className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-zinc-300 border border-white/10"
-                  >
-                    에스프레소(250)
-                  </button>
-                  <button
-                    onClick={() => setTargetMicron(750)}
-                    className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-zinc-300 border border-white/10"
-                  >
-                    드립(750)
-                  </button>
-                  <button
-                    onClick={() => setTargetMicron(1200)}
-                    className="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-zinc-300 border border-white/10"
-                  >
-                    프프(1200)
-                  </button>
-                </div>
               </div>
 
               <input
