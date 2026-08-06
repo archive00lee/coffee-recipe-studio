@@ -4,6 +4,7 @@ import { HomeSection } from './components/HomeSection';
 import { RecipeSection } from './components/RecipeSection';
 import { EvaluationSection } from './components/EvaluationSection';
 import { BeanSection } from './components/BeanSection';
+import { GrindSection } from './components/GrindSection';
 import { RecipeDetailModal } from './components/RecipeDetailModal';
 import { RecipeFormModal } from './components/RecipeFormModal';
 import { EvaluationFormModal } from './components/EvaluationFormModal';
@@ -33,7 +34,7 @@ export default function App() {
   const [evaluations, setEvaluations] = useState<BrewEvaluation[]>([]);
   const [beans, setBeans] = useState<BeanInfo[]>(INITIAL_BEANS);
 
-  const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation' | 'bean'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'recipe' | 'evaluation' | 'bean' | 'grind'>('home');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAddEvalModalOpen, setIsAddEvalModalOpen] = useState(false);
   const [isAddBeanModalOpen, setIsAddBeanModalOpen] = useState(false);
@@ -399,6 +400,10 @@ export default function App() {
               onSelectRecipe={(recipe) => setSelectedRecipeForDetail(recipe)}
               onEditEvaluation={handleOpenEditEvalModal}
             />
+          )}
+
+          {activeTab === 'grind' && (
+            <GrindSection />
           )}
         </main>
 
