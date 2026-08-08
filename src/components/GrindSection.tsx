@@ -246,10 +246,9 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
   return (
     <div className="space-y-8 pb-16">
       {/* Top Banner Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-zinc-900 via-black to-zinc-950 border border-white/15 p-6 sm:p-8 shadow-2xl">
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-zinc-900 border border-zinc-800 p-6 sm:p-8">
         <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-white">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-xs font-semibold text-white">
             <Calculator className="w-3.5 h-3.5 text-zinc-300" />
             <span>Smart Grind Calculator</span>
           </div>
@@ -263,9 +262,9 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
       </div>
 
       {/* Main Calculator Card */}
-      <div className="bg-black/80 backdrop-blur-xl border border-white/15 rounded-3xl p-5 sm:p-7 space-y-6 shadow-2xl">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-7 space-y-6">
         {/* Step 1: Grinder Selection & Mode Toggle */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-zinc-800">
           {/* Grinder Selection */}
           <div className="space-y-1.5">
             <label className="block text-xs font-bold text-zinc-300">
@@ -274,7 +273,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
             <select
               value={selectedGrinderId}
               onChange={(e) => setSelectedGrinderId(e.target.value)}
-              className="w-full bg-zinc-900 border border-white/20 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-white transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-zinc-600 transition"
             >
               {Object.values(GRINDER_SPECS).map((spec) => (
                 <option key={spec.id} value={spec.id}>
@@ -289,13 +288,13 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
             <label className="block text-xs font-bold text-zinc-300">
               2. 계산 모드 (Calculation Mode)
             </label>
-            <div className="grid grid-cols-2 gap-2 bg-zinc-900 p-1 rounded-xl border border-white/15">
+            <div className="grid grid-cols-2 gap-2 bg-zinc-950 p-1 rounded-xl border border-zinc-800">
               <button
                 type="button"
                 onClick={() => setCalcMode('micronToClick')}
                 className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                   calcMode === 'micronToClick'
-                    ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-black shadow-md'
+                    ? 'bg-white text-black font-extrabold'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -306,7 +305,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                 onClick={() => setCalcMode('clickToMicron')}
                 className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                   calcMode === 'clickToMicron'
-                    ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-black shadow-md'
+                    ? 'bg-white text-black font-extrabold'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -318,7 +317,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
 
         {/* Custom Grinder Spec Override (Only visible if 'custom' selected) */}
         {selectedGrinderId === 'custom' && (
-          <div className="bg-white/5 p-4 rounded-2xl border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div>
               <label className="block text-zinc-300 font-semibold mb-1">
                 1클릭 당 미크론 변화량 (μm/클릭)
@@ -327,7 +326,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                 type="number"
                 value={customMicronPerClick}
                 onChange={(e) => setCustomMicronPerClick(Number(e.target.value) || 10)}
-                className="w-full bg-black border border-white/20 rounded-xl p-2.5 text-white font-mono"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white font-mono"
               />
             </div>
             <div>
@@ -338,20 +337,20 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                 type="number"
                 value={customBaseOffset}
                 onChange={(e) => setCustomBaseOffset(Number(e.target.value) || 0)}
-                className="w-full bg-black border border-white/20 rounded-xl p-2.5 text-white font-mono"
+                className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-white font-mono"
               />
             </div>
           </div>
         )}
 
         {/* Step 2: Interactive Input Controls */}
-        <div className="bg-zinc-900/90 border border-white/10 p-5 rounded-2xl space-y-4">
+        <div className="bg-zinc-950 border border-zinc-800 p-5 rounded-2xl space-y-4">
           {calcMode === 'micronToClick' ? (
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-white flex items-center gap-2">
                   <span>목표 입자 크기 설정 (Target Micron):</span>
-                  <span className="text-sm font-mono font-extrabold text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/20">
+                  <span className="text-sm font-mono font-extrabold text-white bg-zinc-800 px-2.5 py-0.5 rounded-lg border border-zinc-700">
                     {targetMicron} μm
                   </span>
                 </label>
@@ -372,7 +371,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                   type="number"
                   value={targetMicron}
                   onChange={(e) => setTargetMicron(Number(e.target.value) || 0)}
-                  className="w-32 bg-black border border-white/20 rounded-xl p-2.5 text-sm font-mono font-bold text-white"
+                  className="w-32 bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-sm font-mono font-bold text-white"
                 />
                 <span className="text-xs text-zinc-400">마이크로미터(μm) 수치를 직접 입력하셔도 됩니다.</span>
               </div>
@@ -382,7 +381,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-white flex items-center gap-2">
                   <span>현재 그라인더 세팅 설정 ({currentSpec.unitName}):</span>
-                  <span className="text-sm font-mono font-extrabold text-white bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/20">
+                  <span className="text-sm font-mono font-extrabold text-white bg-zinc-800 px-2.5 py-0.5 rounded-lg border border-zinc-700">
                     {inputClick} {currentSpec.unitName}
                   </span>
                 </label>
@@ -403,7 +402,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                   type="number"
                   value={inputClick}
                   onChange={(e) => setInputClick(Number(e.target.value) || 0)}
-                  className="w-32 bg-black border border-white/20 rounded-xl p-2.5 text-sm font-mono font-bold text-white"
+                  className="w-32 bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-sm font-mono font-bold text-white"
                 />
                 <span className="text-xs text-zinc-400">그라인더의 클릭/단계 숫자를 직접 입력하세요.</span>
               </div>
@@ -412,7 +411,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
         </div>
 
         {/* Step 3: Calculation Result Card */}
-        <div className="bg-gradient-to-r from-zinc-900 via-black to-zinc-900 border-2 border-white/30 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+        <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-1">
               <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest block">
@@ -436,7 +435,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                 )}
               </div>
               {boundaryNote && (
-                <p className="text-[11px] font-semibold text-amber-400 pt-0.5">
+                <p className="text-[11px] font-semibold text-zinc-300 pt-0.5">
                   {boundaryNote}
                 </p>
               )}
@@ -447,17 +446,17 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
             </div>
 
             {/* Quick Save Inputs */}
-            <div className="flex flex-col gap-2 shrink-0 sm:w-64 border-t sm:border-t-0 sm:border-l border-white/10 sm:pl-6 pt-4 sm:pt-0">
+            <div className="flex flex-col gap-2 shrink-0 sm:w-64 border-t sm:border-t-0 sm:border-l border-zinc-800 sm:pl-6 pt-4 sm:pt-0">
               <input
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="원두명 또는 추출 메모 (선택)"
-                className="bg-black/60 border border-white/15 rounded-xl p-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
               />
               <button
                 onClick={handleSaveRecord}
-                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-extrabold text-xs shadow-lg transition active:scale-95"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-zinc-200 text-black font-extrabold text-xs transition active:scale-95"
               >
                 <Bookmark className="w-4 h-4 fill-black" />
                 <span>계산 결과 기록 저장</span>
@@ -468,7 +467,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
       </div>
 
       {/* History & Filter Section */}
-      <div className="space-y-4 pt-4 border-t border-white/10">
+      <div className="space-y-4 pt-4 border-t border-zinc-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
             <Bookmark className="w-4 h-4 text-zinc-300" />
@@ -482,8 +481,8 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
               onClick={() => setHistoryFilterGrinder('all')}
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition ${
                 historyFilterGrinder === 'all'
-                  ? 'bg-white text-black shadow-md'
-                  : 'bg-black/60 text-zinc-400 border border-white/10 hover:border-white/30 hover:text-white'
+                  ? 'bg-white text-black'
+                  : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-white'
               }`}
             >
               전체 ({records.length})
@@ -497,8 +496,8 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                   onClick={() => setHistoryFilterGrinder(spec.id)}
                   className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition ${
                     historyFilterGrinder === spec.id
-                      ? 'bg-white text-black shadow-md'
-                      : 'bg-black/60 text-zinc-400 border border-white/10 hover:border-white/30 hover:text-white'
+                      ? 'bg-white text-black'
+                      : 'bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-white'
                   }`}
                 >
                   {spec.name.split(' ')[0]} ({count})
@@ -510,7 +509,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
 
         {/* History List */}
         {filteredRecords.length === 0 ? (
-          <div className="text-center py-12 bg-black/40 rounded-3xl border border-white/10 p-6">
+          <div className="text-center py-12 bg-zinc-900 rounded-2xl border border-zinc-800 p-6">
             <Info className="w-8 h-8 text-zinc-500 mx-auto mb-2" />
             <p className="text-xs text-zinc-400">저장된 계산 기록이 없습니다.</p>
             <p className="text-[11px] text-zinc-500 mt-1">상단의 계산기에서 원하는 수치를 계산하고 &apos;계산 결과 기록 저장&apos; 버튼을 눌러보세요.</p>
@@ -520,11 +519,11 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
             {filteredRecords.map((rec) => (
               <div
                 key={rec.id}
-                className="bg-black/80 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:border-white/30 transition space-y-2.5 relative group"
+                className="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 hover:border-zinc-700 transition space-y-2.5 relative group"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white/10 text-zinc-300 border border-white/15">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 border border-zinc-700">
                       {rec.grinderName}
                     </span>
                     <h4 className="text-sm font-bold text-white mt-1.5 flex items-center gap-2">
@@ -534,13 +533,13 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
 
                   <div className="flex items-center gap-2 shrink-0">
                     <div className="text-right">
-                      <div className="text-sm font-mono font-extrabold text-white bg-white/15 px-2.5 py-1 rounded-lg border border-white/20">
+                      <div className="text-sm font-mono font-extrabold text-white bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700">
                         {rec.calculatedClick} {rec.unitName} ({rec.calculatedMicron} μm)
                       </div>
                     </div>
                     <button
                       onClick={() => handleDeleteRecord(rec.id)}
-                      className="p-1 text-zinc-500 hover:text-red-400 transition"
+                      className="p-1 text-zinc-500 hover:text-white transition"
                       title="기록 삭제"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -549,7 +548,7 @@ export const GrindSection: React.FC<GrindSectionProps> = ({
                 </div>
 
                 {rec.notes && (
-                  <p className="text-xs text-zinc-300 bg-white/5 p-2.5 rounded-xl border border-white/10 leading-relaxed">
+                  <p className="text-xs text-zinc-300 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 leading-relaxed">
                     {rec.notes}
                   </p>
                 )}

@@ -151,7 +151,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   };
 
   const renderStarPicker = (value: number, setValue: (v: number) => void, label: string) => (
-    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md p-2.5 rounded-xl border border-white/10">
+    <div className="flex items-center justify-between bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
       <span className="text-xs font-semibold text-zinc-300">{label}</span>
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -178,13 +178,13 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-5 my-8 max-h-[90vh] overflow-y-auto ring-1 ring-white/10">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+      <div className="bg-zinc-900 border border-zinc-800 w-full max-w-2xl rounded-2xl p-6 space-y-5 my-8 max-h-[90vh] overflow-y-auto text-white">
         
         {/* Header */}
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
+        <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white via-zinc-300 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] backdrop-blur-md shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white">
               {initialData ? <Edit3 className="w-4 h-4 stroke-[2.5]" /> : <ClipboardCheck className="w-4 h-4 stroke-[2.5]" />}
             </div>
             <h3 className="text-lg font-bold text-white tracking-tight">
@@ -194,7 +194,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition border border-transparent hover:border-white/10"
+            className="text-zinc-400 hover:text-white p-1.5 rounded-xl hover:bg-zinc-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -203,36 +203,22 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Target Recipe Select */}
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1">
-                평가할 레시피 선택 <span className="text-white">*</span>
-              </label>
-              <select
-                value={selectedRecipeId}
-                onChange={(e) => handleRecipeSelectChange(Number(e.target.value))}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
-              >
-                {recipes.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    [{r.brewMethod}] {r.title}
-                  </option>
-                ))}
-                <option value={0}>+ 직접 입력 (목록에 없는 레시피)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1">
-                평가 일자
-              </label>
-              <input
-                type="date"
-                value={evalDate}
-                onChange={(e) => setEvalDate(e.target.value)}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition font-mono"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-semibold text-zinc-300 mb-1">
+              평가할 레시피 선택 <span className="text-white">*</span>
+            </label>
+            <select
+              value={selectedRecipeId}
+              onChange={(e) => handleRecipeSelectChange(Number(e.target.value))}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-zinc-600 transition"
+            >
+              {recipes.map((r) => (
+                <option key={r.id} value={r.id}>
+                  [{r.brewMethod}] {r.title}
+                </option>
+              ))}
+              <option value={0}>+ 직접 입력 (목록에 없는 레시피)</option>
+            </select>
           </div>
 
           {/* Bean Name & Roast Level */}
@@ -259,11 +245,11 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                     }
                   }}
                   defaultValue=""
-                  className="w-full bg-white/10 border border-white/20 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-white/50 font-semibold"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-zinc-600 font-semibold"
                 >
-                  <option value="" disabled className="bg-[#030303] text-zinc-400">-- 등록된 원두 목록에서 바로 선택 --</option>
+                  <option value="" disabled className="bg-zinc-900 text-zinc-400">-- 등록된 원두 목록에서 바로 선택 --</option>
                   {beans.map(b => (
-                    <option key={b.id} value={b.id} className="bg-[#030303] text-white">
+                    <option key={b.id} value={b.id} className="bg-zinc-900 text-white">
                       [{b.roastery}] {b.name} (Agtron {b.agtronNumber})
                     </option>
                   ))}
@@ -280,20 +266,20 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                 value={beanName}
                 onChange={(e) => setBeanName(e.target.value)}
                 placeholder="예: 에티오피아 예가체프 아리차, 콜롬비아 게이샤"
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
               />
             </div>
           </div>
 
           {/* Agtron No. Roast Level Slider Section */}
-          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-3">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
             <div className="flex justify-between items-center">
               <label className="text-xs font-semibold text-white flex items-center gap-1.5">
                 <Flame className="w-4 h-4 text-white" />
                 <span>원두 배전도 (Agtron No.)</span>
               </label>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-lg border border-white/20 text-white text-xs font-mono font-bold">
+                <div className="flex items-center gap-1.5 bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800 text-white text-xs font-mono font-bold">
                   <span>Agtron No.</span>
                   <input
                     type="number"
@@ -313,10 +299,10 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                       if (val > 95) val = 95;
                       setAgtronNumber(val);
                     }}
-                    className="w-12 bg-black/60 border border-white/30 rounded px-1 py-0.5 text-center text-white font-bold font-mono focus:outline-none focus:border-white text-xs"
+                    className="w-12 bg-zinc-950 border border-zinc-800 rounded px-1 py-0.5 text-center text-white font-bold font-mono focus:outline-none focus:border-zinc-600 text-xs"
                   />
                 </div>
-                <span className="text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/20">
+                <span className="text-xs font-bold text-white bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800">
                   {getAgtronRoastLevel(agtronNumber, customRoastName)}
                 </span>
               </div>
@@ -336,7 +322,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                     setCustomRoastName('');
                   }
                 }}
-                className="w-full h-2 bg-gradient-to-r from-zinc-800 via-zinc-400 to-white rounded-lg appearance-none cursor-pointer accent-white"
+                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
               />
 
               <div className="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
@@ -377,8 +363,8 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                       }}
                       className={`text-[10px] font-mono px-2.5 py-1 rounded-md border transition ${
                         isSelected
-                          ? 'bg-white text-black font-extrabold border-white shadow-md'
-                          : 'bg-black/40 text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
+                          ? 'bg-white text-black font-extrabold border-white'
+                          : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:border-zinc-700 hover:text-white'
                       }`}
                     >
                       {p.name}
@@ -390,7 +376,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
           </div>
 
           {/* Overall Rating (1~5 Stars) */}
-          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-2">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-2">
             <div className="flex justify-between items-center">
               <label className="text-xs font-bold text-white flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-white" />
@@ -433,7 +419,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
           </div>
 
           {/* Tasting Notes Tags */}
-          <div className="space-y-2 pt-2 border-t border-white/10">
+          <div className="space-y-2 pt-2 border-t border-zinc-800">
             <label className="block text-xs font-bold text-white flex items-center gap-1">
               <Tag className="w-3.5 h-3.5 text-zinc-400" />
               <span>시음 노트 키워드</span>
@@ -451,12 +437,12 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                   }
                 }}
                 placeholder="태그 입력 후 엔터 (예: 청사과)"
-                className="flex-1 bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
               />
               <button
                 type="button"
                 onClick={() => handleAddTag(customTagInput)}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition shrink-0"
+                className="px-3.5 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-bold rounded-xl transition shrink-0"
               >
                 추가
               </button>
@@ -474,7 +460,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
                     className={`text-[10px] px-2 py-0.5 rounded-lg border transition ${
                       isSelected
                         ? 'bg-white text-black font-extrabold border-white'
-                        : 'bg-black/40 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white'
+                        : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white'
                     }`}
                   >
                     +{note}
@@ -485,17 +471,17 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
 
             {/* Selected Tasting Notes list with X delete buttons */}
             {tastingNotes.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1.5 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="flex flex-wrap gap-1.5 pt-1.5 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
                 {tastingNotes.map((note) => (
                   <span
                     key={note}
-                    className="text-xs font-bold bg-white/15 text-white border border-white/30 px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm"
+                    className="text-xs font-bold bg-zinc-800 text-white border border-zinc-700 px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm"
                   >
                     <span>{note}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(note)}
-                      className="hover:text-red-400 transition ml-0.5 p-0.5"
+                      className="hover:text-zinc-400 transition ml-0.5 p-0.5"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -515,12 +501,12 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
               placeholder="맛의 균형감, 개선할 점 (예: 수온을 1~2도 낮추면 쓴맛이 줄고 단맛이 더 살 것 같음)을 기록하세요."
-              className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             ></textarea>
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-3 pt-3 border-t border-white/10">
+          <div className="flex justify-end space-x-3 pt-3 border-t border-zinc-800">
             <button
               type="button"
               onClick={onClose}
@@ -530,7 +516,7 @@ export const EvaluationFormModal: React.FC<EvaluationFormModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-white to-zinc-200 hover:brightness-110 text-black font-extrabold text-xs rounded-xl shadow-lg transition"
+              className="px-6 py-2.5 bg-white text-black hover:bg-zinc-200 font-extrabold text-xs rounded-xl transition"
             >
               {initialData ? '수정사항 저장' : '평가 저장'}
             </button>

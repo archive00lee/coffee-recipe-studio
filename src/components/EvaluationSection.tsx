@@ -64,7 +64,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
     <div className="space-y-6 animate-fade-in">
       
       {/* Top Hero Banner */}
-      <div className="bg-gradient-to-br from-[#030303] via-zinc-900 to-[#030303] backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+      <div className="bg-zinc-900 p-6 sm:p-8 rounded-2xl border border-zinc-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
         <div className="space-y-2 z-10">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             SENSORY LOG
@@ -74,7 +74,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0 z-10 w-full sm:w-auto justify-between sm:justify-end border-t md:border-t-0 border-white/10 pt-4 md:pt-0">
+        <div className="flex items-center gap-4 shrink-0 z-10 w-full sm:w-auto justify-between sm:justify-end border-t md:border-t-0 border-zinc-800 pt-4 md:pt-0">
           <div className="text-right">
             <div className="text-2xl font-extrabold text-white font-mono flex items-center justify-end gap-1">
               <Star className="w-5 h-5 fill-white text-white" />
@@ -86,7 +86,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
 
           <button
             onClick={openAddModal}
-            className="flex items-center space-x-2 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)] transition shrink-0 active:scale-95"
+            className="flex items-center space-x-2 bg-white text-black hover:bg-zinc-200 text-xs font-extrabold px-4 py-2.5 rounded-xl transition shrink-0 active:scale-95"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>새 평가 작성</span>
@@ -105,7 +105,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
             placeholder="레시피명, 원두, 시음노트 태그 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
         </div>
 
@@ -119,10 +119,10 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
             <button
               key={item.value}
               onClick={() => setSelectedRatingFilter(item.value)}
-              className={`px-3 py-2 rounded-xl text-xs font-semibold shrink-0 transition border backdrop-blur-md ${
+              className={`px-3 py-2 rounded-xl text-xs font-semibold shrink-0 transition border ${
                 selectedRatingFilter === item.value
-                  ? 'bg-gradient-to-r from-zinc-100 to-zinc-300 text-black border-white shadow-md font-bold'
-                  : 'bg-black/60 text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
+                  ? 'bg-white text-black border-white font-bold'
+                  : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700'
               }`}
             >
               {item.label}
@@ -137,18 +137,15 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
           {filteredEvaluations.map((item) => (
             <div
               key={item.id}
-              className="bg-gradient-to-br from-zinc-900/60 via-zinc-950/80 to-black/90 backdrop-blur-xl border border-white/10 hover:border-white/30 p-5 rounded-2xl shadow-2xl space-y-4 transition flex flex-col justify-between"
+              className="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 p-5 rounded-2xl space-y-4 transition flex flex-col justify-between"
             >
               <div className="space-y-3">
                 {/* Header: Method, Date & Actions */}
                 <div className="flex justify-between items-start gap-2">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-white/10 text-zinc-100 border border-white/20 backdrop-blur-md">
+                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-700">
                         {item.brewMethod}
-                      </span>
-                      <span className="text-[10px] text-zinc-400 font-mono">
-                        {item.evalDate}
                       </span>
                     </div>
 
@@ -168,7 +165,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
 
                   <div className="flex items-center gap-1.5">
                     {/* Stars */}
-                    <div className="flex items-center gap-0.5 bg-black/60 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-md">
+                    <div className="flex items-center gap-0.5 bg-zinc-950 px-2.5 py-1 rounded-lg border border-zinc-800">
                       <Star className="w-3.5 h-3.5 fill-white text-white" />
                       <span className="text-xs font-mono font-bold text-white ml-1">
                         {item.rating}
@@ -178,7 +175,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                     {/* Edit button */}
                     <button
                       onClick={() => onEditEvaluation(item)}
-                      className="p-1.5 rounded-lg border border-white/10 bg-black/60 text-zinc-300 hover:text-white hover:border-white/30 transition text-xs"
+                      className="p-1.5 rounded-lg border border-zinc-800 bg-zinc-950 text-zinc-300 hover:text-white hover:border-zinc-700 transition text-xs"
                       title="평가 수정"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
@@ -189,8 +186,8 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                       onClick={() => handleDelete(item.id)}
                       className={`p-1.5 rounded-lg border text-xs transition ${
                         deletingId === item.id
-                          ? 'bg-rose-950/80 border-rose-700 text-rose-300 font-bold'
-                          : 'bg-black/60 border-white/10 text-zinc-400 hover:text-rose-400 hover:border-rose-500/30'
+                          ? 'bg-zinc-800 border-zinc-600 text-white font-bold'
+                          : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-700'
                       }`}
                       title="평가 삭제"
                     >
@@ -200,10 +197,10 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                 </div>
 
                 {/* Bean Name & Roast Level */}
-                <div className="flex items-center gap-2 text-xs bg-black/60 p-2.5 rounded-xl border border-white/10 backdrop-blur-md">
+                <div className="flex items-center gap-2 text-xs bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
                   <Coffee className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                   <span className="font-semibold text-zinc-200 truncate">{item.beanName}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/10 text-white ml-auto shrink-0 border border-white/20 font-mono font-bold flex items-center gap-1">
+                  <span className="text-[10px] px-2 py-0.5 rounded-md bg-zinc-800 text-white ml-auto shrink-0 border border-zinc-700 font-mono font-bold flex items-center gap-1">
                     <Flame className="w-2.5 h-2.5 text-white" />
                     <span>Agtron {item.agtronNumber ?? 55} ({getAgtronRoastLevel(item.agtronNumber ?? 55, item.roastLevel)})</span>
                   </span>
@@ -218,12 +215,12 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                     { label: '쓴맛', val: item.bitterness },
                     { label: '후미', val: item.aftertaste },
                   ].map((m) => (
-                    <div key={m.label} className="bg-black/60 p-2 rounded-xl border border-white/10 text-center backdrop-blur-md">
+                    <div key={m.label} className="bg-zinc-950 p-2 rounded-xl border border-zinc-800 text-center">
                       <div className="text-[10px] text-zinc-400 mb-1">{m.label}</div>
                       <div className="text-xs font-mono font-bold text-white mb-1">{m.val}</div>
-                      <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                      <div className="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-zinc-300 to-white h-full"
+                          className="bg-white h-full"
                           style={{ width: `${(m.val / 5) * 100}%` }}
                         ></div>
                       </div>
@@ -238,7 +235,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
                     {item.tastingNotes.map((note) => (
                       <span
                         key={note}
-                        className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-white/10 text-zinc-200 border border-white/20 backdrop-blur-md"
+                        className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-zinc-950 text-zinc-200 border border-zinc-800"
                       >
                         #{note}
                       </span>
@@ -248,7 +245,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
 
                 {/* Memo */}
                 {item.memo && (
-                  <div className="bg-black/60 p-3 rounded-xl border border-white/10 text-xs text-zinc-300 leading-relaxed whitespace-pre-line backdrop-blur-md">
+                  <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-xs text-zinc-300 leading-relaxed whitespace-pre-line">
                     <span className="text-[10px] font-bold text-zinc-400 uppercase mb-1 flex items-center gap-1">
                       <Sparkles className="w-3 h-3 text-white" />
                       추출 총평 및 다음 가이드
@@ -262,8 +259,8 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
         </div>
       ) : (
         /* Empty State */
-        <div className="bg-gradient-to-br from-zinc-900/60 to-black/90 backdrop-blur-xl border border-white/10 rounded-2xl p-12 text-center space-y-4 shadow-2xl">
-          <div className="w-12 h-12 bg-black/80 border border-white/20 rounded-2xl flex items-center justify-center mx-auto text-zinc-300 shadow-lg">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-12 text-center space-y-4">
+          <div className="w-12 h-12 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center mx-auto text-zinc-300">
             <ClipboardCheck className="w-6 h-6" />
           </div>
           <div className="space-y-1">
@@ -274,7 +271,7 @@ export const EvaluationSection: React.FC<EvaluationSectionProps> = ({
           </div>
           <button
             onClick={openAddModal}
-            className="inline-flex items-center space-x-1.5 bg-gradient-to-r from-white to-zinc-200 text-black font-extrabold text-xs px-4 py-2.5 rounded-xl hover:brightness-110 transition shadow-lg"
+            className="inline-flex items-center space-x-1.5 bg-white text-black font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-zinc-200 transition"
           >
             <Plus className="w-4 h-4" />
             <span>첫 추출 평가 작성하기</span>

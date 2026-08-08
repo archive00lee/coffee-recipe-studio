@@ -21,13 +21,13 @@ export const Header: React.FC<HeaderProps> = ({
   favoriteCount
 }) => {
   return (
-    <header className="border-b border-white/10 bg-black/70 backdrop-blur-xl sticky top-0 z-40 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+    <header className="border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-md sticky top-0 z-40 transition-all">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 space-y-3">
         
         {/* Top Row: Brand Logo & Optional Actions */}
         <div className="flex justify-between items-center gap-4">
           <div className="flex items-center space-x-3 cursor-pointer group shrink-0" onClick={() => setActiveTab('home')}>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-br from-white via-zinc-400 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] shadow-lg group-hover:border-white transition duration-300">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-black transition duration-200">
               <Coffee className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
             </div>
             <div>
@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => setActiveTab('recipe')}
                 title="즐겨찾기 목록"
-                className="flex items-center space-x-1.5 text-xs text-zinc-200 bg-zinc-900/90 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-xl hover:border-white/30 transition whitespace-nowrap shadow-md"
+                className="flex items-center space-x-1.5 text-xs text-zinc-200 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg hover:border-zinc-700 transition whitespace-nowrap"
               >
                 <Bookmark className="w-3.5 h-3.5 fill-white text-white" />
                 <span>{favoriteCount}개 저장됨</span>
@@ -54,13 +54,13 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Bottom Row: Navigation Tabs (Order: 홈 > 레시피 > 센서리 > 분쇄도 > 원두) */}
-        <nav className="flex items-center justify-between sm:justify-start gap-1 sm:gap-2 bg-[#030303]/90 backdrop-blur-md p-1.5 rounded-2xl border border-white/15 shadow-inner overflow-x-auto">
+        <nav className="flex items-center justify-between sm:justify-start gap-1 sm:gap-2 bg-zinc-900/90 p-1 rounded-xl border border-zinc-800/80 overflow-x-auto">
           <button
             onClick={() => setActiveTab('home')}
-            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'home'
-                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-extrabold scale-[1.02]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-black font-extrabold shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
             }`}
           >
             <Compass className="w-4 h-4" />
@@ -69,16 +69,16 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('recipe')}
-            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'recipe'
-                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-extrabold scale-[1.02]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-black font-extrabold shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
             }`}
           >
             <Coffee className="w-4 h-4" />
             <span>레시피</span>
             <span className={`ml-0.5 px-2 py-0.5 rounded-full text-[11px] font-mono ${
-              activeTab === 'recipe' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
+              activeTab === 'recipe' ? 'bg-zinc-900 text-white' : 'bg-zinc-800 text-zinc-300'
             }`}>
               {recipeCount}
             </span>
@@ -86,16 +86,16 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('evaluation')}
-            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'evaluation'
-                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-extrabold scale-[1.02]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-black font-extrabold shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
             }`}
           >
             <ClipboardCheck className="w-4 h-4" />
             <span>센서리</span>
             <span className={`ml-0.5 px-2 py-0.5 rounded-full text-[11px] font-mono ${
-              activeTab === 'evaluation' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
+              activeTab === 'evaluation' ? 'bg-zinc-900 text-white' : 'bg-zinc-800 text-zinc-300'
             }`}>
               {evaluationCount}
             </span>
@@ -103,10 +103,10 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('grind')}
-            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'grind'
-                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-extrabold scale-[1.02]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-black font-extrabold shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
             }`}
           >
             <Sliders className="w-4 h-4" />
@@ -115,16 +115,16 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => setActiveTab('bean')}
-            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap ${
               activeTab === 'bean'
-                ? 'bg-gradient-to-r from-white via-zinc-200 to-zinc-400 text-[#030303] shadow-lg font-extrabold scale-[1.02]'
-                : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                ? 'bg-white text-black font-extrabold shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
             }`}
           >
             <Package className="w-4 h-4" />
             <span>원두</span>
             <span className={`ml-0.5 px-2 py-0.5 rounded-full text-[11px] font-mono ${
-              activeTab === 'bean' ? 'bg-[#030303] text-white' : 'bg-white/10 text-zinc-300'
+              activeTab === 'bean' ? 'bg-zinc-900 text-white' : 'bg-zinc-800 text-zinc-300'
             }`}>
               {beanCount}
             </span>

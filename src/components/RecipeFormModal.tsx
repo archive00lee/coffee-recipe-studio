@@ -146,13 +146,13 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-[#030303]/70 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
-      <div className="bg-[#030303]/70 backdrop-blur-2xl border border-white/20 w-full max-w-2xl rounded-3xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-5 my-8 max-h-[90vh] overflow-y-auto ring-1 ring-white/10">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto animate-fade-in">
+      <div className="bg-zinc-900 border border-zinc-800 w-full max-w-2xl rounded-2xl p-6 space-y-5 my-8 max-h-[90vh] overflow-y-auto text-white">
         
         {/* Modal Title Bar */}
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
+        <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white via-zinc-300 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] backdrop-blur-md shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white">
               {initialData ? <Edit3 className="w-4 h-4 stroke-[2.5]" /> : <Sparkles className="w-4 h-4 stroke-[2.5]" />}
             </div>
             <h3 className="text-lg font-bold text-white tracking-tight">
@@ -162,7 +162,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-zinc-400 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition border border-transparent hover:border-white/10"
+            className="text-zinc-400 hover:text-white p-1.5 rounded-xl hover:bg-zinc-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -180,7 +180,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="예: 에티오피아 예가체프 드립, 에어로프레스 정밀 레시피"
-              className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             />
           </div>
 
@@ -191,7 +191,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               <select
                 value={brewMethod}
                 onChange={(e) => handleBrewMethodChange(e.target.value)}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-zinc-600 transition"
               >
                 <option value="에어로프레스">에어로프레스</option>
                 <option value="Hario v60 02">Hario v60 02</option>
@@ -209,7 +209,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-zinc-600 transition"
               >
                 {currentAvailableFilters.map((opt) => (
                   <option key={opt} value={opt}>
@@ -229,7 +229,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                   <select
                     value={capType}
                     onChange={(e) => setCapType(e.target.value)}
-                    className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-white/50 transition"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white focus:outline-none focus:border-zinc-600 transition"
                   >
                     <option value="기본">기본</option>
                     <option value="플로우컨트롤">플로우컨트롤</option>
@@ -241,13 +241,13 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                     <Compass className="w-3.5 h-3.5 text-zinc-400" />
                     <span>추출방향</span>
                   </label>
-                  <div className="grid grid-cols-2 p-1 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl">
+                  <div className="grid grid-cols-2 p-1 bg-zinc-950 border border-zinc-800 rounded-xl">
                     <button
                       type="button"
                       onClick={() => setOrientation('정방향')}
                       className={`py-2 text-xs font-bold rounded-lg transition-all ${
                         orientation === '정방향'
-                          ? 'bg-white text-black shadow-md font-extrabold'
+                          ? 'bg-white text-black font-extrabold'
                           : 'text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -258,7 +258,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                       onClick={() => setOrientation('역방향')}
                       className={`py-2 text-xs font-bold rounded-lg transition-all ${
                         orientation === '역방향'
-                          ? 'bg-white text-black shadow-md font-extrabold'
+                          ? 'bg-white text-black font-extrabold'
                           : 'text-zinc-400 hover:text-white'
                       }`}
                     >
@@ -281,19 +281,19 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                 required
                 value={waterTemp}
                 onChange={(e) => setWaterTemp(Number(e.target.value))}
-                className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-white/50 transition font-mono"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-white focus:outline-none focus:border-zinc-600 transition font-mono"
               />
             </div>
           </div>
 
           {/* Bean & Water Amount Ratio Inputs */}
-          <div className="bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 space-y-3">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
             <div className="flex justify-between items-center text-xs">
               <span className="font-semibold text-white flex items-center gap-1">
                 <Scale className="w-3.5 h-3.5 text-white" />
                 <span>원두량 & 물 용량 비율 계산</span>
               </span>
-              <span className="font-mono text-zinc-200 bg-white/10 px-2 py-0.5 rounded-md border border-white/20">
+              <span className="font-mono text-zinc-200 bg-zinc-900 px-2 py-0.5 rounded-md border border-zinc-800">
                 자동 계산 비율: 1 : {calculatedRatio}
               </span>
             </div>
@@ -308,7 +308,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                   required
                   value={beanAmount}
                   onChange={(e) => setBeanAmount(Number(e.target.value))}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-white/50 font-mono"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-zinc-600 font-mono"
                 />
               </div>
 
@@ -321,7 +321,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                   required
                   value={waterAmount}
                   onChange={(e) => setWaterAmount(Number(e.target.value))}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-white/50 font-mono"
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-zinc-600 font-mono"
                 />
               </div>
             </div>
@@ -347,7 +347,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                   value={grindSizeMicrons || ''}
                   onChange={(e) => setGrindSizeMicrons(Number(e.target.value))}
                   placeholder="예: 800"
-                  className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 pr-12 text-sm text-white font-mono placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 pr-12 text-sm text-white font-mono placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
                 />
                 <span className="absolute right-3.5 text-xs font-bold font-mono text-zinc-300 pointer-events-none">
                   μm
@@ -371,7 +371,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                     max="60"
                     value={minutes}
                     onChange={(e) => setMinutes(Number(e.target.value))}
-                    className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-white/50 font-mono"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-zinc-600 font-mono"
                   />
                   <span className="text-xs text-zinc-400 shrink-0">분</span>
                 </div>
@@ -382,7 +382,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                     max="59"
                     value={seconds}
                     onChange={(e) => setSeconds(Number(e.target.value))}
-                    className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-white/50 font-mono"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-zinc-600 font-mono"
                   />
                   <span className="text-xs text-zinc-400 shrink-0">초</span>
                 </div>
@@ -391,7 +391,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
           </div>
 
           {/* Step-by-Step Custom Phase Builder */}
-          <div className="space-y-2 pt-2 border-t border-white/10">
+          <div className="space-y-2 pt-2 border-t border-zinc-800">
             <div className="flex justify-between items-center">
               <div>
                 <label className="block text-xs font-bold text-white">
@@ -402,7 +402,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               <button
                 type="button"
                 onClick={handleAddStep}
-                className="text-xs text-zinc-200 hover:text-white font-semibold flex items-center gap-1 bg-black/60 border border-white/10 px-2.5 py-1 rounded-xl hover:border-white/30 transition backdrop-blur-md shrink-0"
+                className="text-xs text-zinc-200 hover:text-white font-semibold flex items-center gap-1 bg-zinc-950 border border-zinc-800 px-2.5 py-1 rounded-xl hover:border-zinc-700 transition shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>단계 추가</span>
@@ -420,14 +420,14 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                 const totalCumulativeWater = prevCumulativeWater + currentWater;
 
                 return (
-                  <div key={step.id || idx} className="bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 space-y-2">
+                  <div key={step.id || idx} className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <input
                         type="text"
                         value={step.phaseName}
                         onChange={(e) => handleStepChange(idx, 'phaseName', e.target.value)}
                         placeholder="단계 이름 (e.g. 뜸들이기)"
-                        className="bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-white font-bold w-1/3"
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-1.5 text-xs text-white font-bold w-1/3"
                       />
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
@@ -436,7 +436,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                             type="number"
                             value={step.waterAmountGrams}
                             onChange={(e) => handleStepChange(idx, 'waterAmountGrams', Number(e.target.value))}
-                            className="w-14 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
+                            className="w-14 bg-zinc-900 border border-zinc-800 rounded-lg p-1 text-xs text-zinc-200 font-mono"
                           />
                         </div>
                         <div className="flex items-center gap-1">
@@ -445,14 +445,14 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                             type="number"
                             value={step.durationSeconds}
                             onChange={(e) => handleStepChange(idx, 'durationSeconds', Number(e.target.value))}
-                            className="w-14 bg-black/40 border border-white/10 rounded-lg p-1 text-xs text-zinc-200 font-mono"
+                            className="w-14 bg-zinc-900 border border-zinc-800 rounded-lg p-1 text-xs text-zinc-200 font-mono"
                           />
                         </div>
                         {steps.length > 1 && (
                           <button
                             type="button"
                             onClick={() => handleRemoveStep(idx)}
-                            className="text-zinc-400 hover:text-rose-400 p-1"
+                            className="text-zinc-400 hover:text-zinc-200 p-1"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -461,7 +461,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                     </div>
 
                     {/* Time & Water Accumulation Indicator */}
-                    <div className="flex items-center justify-between bg-black/40 px-2.5 py-1 rounded-lg border border-white/5 text-[11px] font-mono">
+                    <div className="flex items-center justify-between bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800 text-[11px] font-mono">
                       <span className="text-zinc-400 text-[10px]">
                         구간: <strong className="text-zinc-200">{formatTimeDigital(prevCumulativeSec)} ~ {formatTimeDigital(totalCumulativeSec)}</strong>
                       </span>
@@ -469,7 +469,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                         <span className="font-bold text-white">
                           누적 시간 {formatSecondsToMinSec(totalCumulativeSec)}
                         </span>
-                        <span className="text-zinc-600">|</span>
+                        <span className="text-zinc-700">|</span>
                         <span className="font-bold text-white">
                           누적 물량 {totalCumulativeWater}g
                         </span>
@@ -481,7 +481,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                       value={step.description}
                       onChange={(e) => handleStepChange(idx, 'description', e.target.value)}
                       placeholder="단계 설명 및 팁"
-                      className="w-full bg-black/40 border border-white/10 rounded-lg p-1.5 text-xs text-zinc-300"
+                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-1.5 text-xs text-zinc-300"
                     />
                   </div>
                 );
@@ -493,7 +493,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               const totalStepsSec = steps.reduce((acc, curr) => acc + (Number(curr.durationSeconds) || 0), 0);
               const totalStepsWater = steps.reduce((acc, curr) => acc + (Number(curr.waterAmountGrams) || 0), 0);
               return (
-                <div className="flex items-center justify-between bg-black/80 p-3 rounded-xl border border-white/20 text-xs shadow-md">
+                <div className="flex items-center justify-between bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-xs">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-white shrink-0" />
                     <div>
@@ -512,7 +512,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
                         setWaterAmount(totalStepsWater);
                       }
                     }}
-                    className="text-[10px] font-bold text-black bg-gradient-to-r from-white to-zinc-300 hover:brightness-110 px-2.5 py-1 rounded-lg transition shadow shrink-0"
+                    className="text-[10px] font-bold text-black bg-white hover:bg-zinc-200 px-2.5 py-1 rounded-lg transition shrink-0"
                   >
                     목표치에 적용
                   </button>
@@ -532,12 +532,12 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               placeholder="추출 순서, 유량 조절법, 푸어링 팁 등을 상세히 기록하세요."
-              className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             ></textarea>
           </div>
 
           {/* Form Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-3 border-t border-white/10">
+          <div className="flex justify-end space-x-3 pt-3 border-t border-zinc-800">
             <button
               type="button"
               onClick={onClose}
@@ -547,7 +547,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-white to-zinc-200 hover:brightness-110 text-black font-extrabold text-xs rounded-xl shadow-lg transition"
+              className="px-6 py-2.5 bg-white text-black hover:bg-zinc-200 font-extrabold text-xs rounded-xl transition"
             >
               {initialData ? '수정사항 저장' : '레시피 저장'}
             </button>

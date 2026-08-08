@@ -96,13 +96,13 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
   const pricePer100g = weightGrams > 0 ? Math.round((price / weightGrams) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#030303]/70 backdrop-blur-md overflow-y-auto">
-      <div className="bg-[#030303]/70 border border-white/20 rounded-3xl p-5 sm:p-6 w-full max-w-xl text-white shadow-[0_20px_50px_rgba(0,0,0,0.8)] space-y-4 my-auto relative backdrop-blur-2xl ring-1 ring-white/10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 w-full max-w-xl text-white space-y-4 my-auto relative">
         
         {/* Header */}
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
+        <div className="flex justify-between items-center border-b border-zinc-800 pb-3">
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white via-zinc-300 to-[#030303] border border-white/30 flex items-center justify-center text-[#030303] shadow-md">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white">
               <Package className="w-4 h-4 stroke-[2.5]" />
             </div>
             <div>
@@ -115,7 +115,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition"
+            className="text-zinc-400 hover:text-white p-1.5 rounded-full hover:bg-zinc-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -136,7 +136,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="예: 에티오피아 예가체프 아리차 G1"
-                className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
               />
             </div>
 
@@ -150,7 +150,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                 value={roastery}
                 onChange={(e) => setRoastery(e.target.value)}
                 placeholder="예: 모모스 커피, 프릳츠, 블루보틀"
-                className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
               />
             </div>
           </div>
@@ -165,19 +165,19 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
               value={origin}
               onChange={(e) => setOrigin(e.target.value)}
               placeholder="예: 에티오피아 / 아리차 농장 / 워시드 (Washed) / 1,900m"
-              className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             />
           </div>
 
           {/* REQUIRED: Agtron No. Roast Level Section */}
-          <div className="bg-black/60 p-4 rounded-2xl border border-white/10 space-y-3 backdrop-blur-md">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
             <div className="flex justify-between items-center">
               <label className="text-xs font-bold text-white flex items-center gap-1.5">
                 <Flame className="w-4 h-4 text-white" />
                 <span>원두 배전도 (Agtron No.)</span>
               </label>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-lg border border-white/20 text-white text-xs font-mono font-bold">
+                <div className="flex items-center gap-1.5 bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800 text-white text-xs font-mono font-bold">
                   <span>Agtron</span>
                   <input
                     type="number"
@@ -195,10 +195,10 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                       if (val > 95) val = 95;
                       setAgtronNumber(val);
                     }}
-                    className="w-12 bg-black/60 border border-white/30 rounded px-1 py-0.5 text-center text-white font-bold font-mono focus:outline-none focus:border-white text-xs"
+                    className="w-12 bg-zinc-950 border border-zinc-800 rounded px-1 py-0.5 text-center text-white font-bold font-mono focus:outline-none focus:border-zinc-600 text-xs"
                   />
                 </div>
-                <span className="text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg border border-white/20">
+                <span className="text-xs font-bold text-white bg-zinc-900 px-2.5 py-1 rounded-lg border border-zinc-800">
                   {currentRoastLevel}
                 </span>
               </div>
@@ -216,7 +216,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                   setAgtronNumber(val);
                   if (val < 60 || val > 70) setCustomRoastName('');
                 }}
-                className="w-full h-2 bg-gradient-to-r from-zinc-800 via-zinc-400 to-white rounded-lg appearance-none cursor-pointer accent-white"
+                className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-white"
               />
               <div className="flex justify-between text-[10px] font-mono text-zinc-400 px-0.5">
                 <span>25 (Dark)</span>
@@ -253,8 +253,8 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                       }}
                       className={`text-[10px] font-mono px-2 py-0.8 rounded-md border transition ${
                         isSelected
-                          ? 'bg-white text-black font-extrabold border-white shadow-md'
-                          : 'bg-black/40 text-zinc-300 border-white/10 hover:border-white/30 hover:text-white'
+                          ? 'bg-white text-black font-extrabold border-white'
+                          : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:border-zinc-700 hover:text-white'
                       }`}
                     >
                       {p.name}
@@ -277,7 +277,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                 value={price || ''}
                 onChange={(e) => setPrice(Number(e.target.value))}
                 placeholder="18000"
-                className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-zinc-600 transition"
               />
             </div>
 
@@ -291,14 +291,14 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                 value={weightGrams || ''}
                 onChange={(e) => setWeightGrams(Number(e.target.value))}
                 placeholder="200"
-                className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-white/50 transition"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs sm:text-sm text-white font-mono focus:outline-none focus:border-zinc-600 transition"
               />
             </div>
           </div>
 
           {/* Calculated Price Per 100g */}
           {weightGrams > 0 && price > 0 && (
-            <div className="bg-white/5 px-3 py-2 rounded-xl border border-white/10 text-xs flex justify-between items-center font-mono">
+            <div className="bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 text-xs flex justify-between items-center font-mono">
               <span className="text-zinc-400">100g 당 가성비 단가:</span>
               <span className="text-white font-bold">₩{pricePer100g.toLocaleString()} / 100g</span>
             </div>
@@ -315,7 +315,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
               value={purchaseUrl}
               onChange={(e) => setPurchaseUrl(e.target.value)}
               placeholder="https://example.com/products/bean-123"
-              className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition font-mono"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition font-mono"
             />
           </div>
 
@@ -338,12 +338,12 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                   }
                 }}
                 placeholder="태그 입력 후 엔터 (예: 청사과)"
-                className="flex-1 bg-black/60 border border-white/10 rounded-xl p-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+                className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl p-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
               />
               <button
                 type="button"
                 onClick={() => handleAddTag(tagInput)}
-                className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition"
+                className="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-bold rounded-xl transition"
               >
                 추가
               </button>
@@ -359,7 +359,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
                   className={`text-[10px] px-2 py-0.5 rounded-lg border transition ${
                     flavorNotes.includes(tag)
                       ? 'bg-white text-black font-bold border-white'
-                      : 'bg-black/40 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white'
+                      : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white'
                   }`}
                 >
                   +{tag}
@@ -369,17 +369,17 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
 
             {/* Selected Flavor Notes list */}
             {flavorNotes.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1 bg-black/40 p-2 rounded-xl border border-white/5">
+              <div className="flex flex-wrap gap-1.5 pt-1 bg-zinc-950 p-2 rounded-xl border border-zinc-800">
                 {flavorNotes.map((note) => (
                   <span
                     key={note}
-                    className="text-xs font-bold bg-white/15 text-white border border-white/30 px-2.5 py-0.5 rounded-lg flex items-center gap-1 shadow-sm"
+                    className="text-xs font-bold bg-zinc-800 text-white border border-zinc-700 px-2.5 py-0.5 rounded-lg flex items-center gap-1 shadow-sm"
                   >
                     <span>{note}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(note)}
-                      className="hover:text-rose-400"
+                      className="hover:text-zinc-400"
                     >
                       ×
                     </button>
@@ -399,12 +399,12 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="원두에 대한 개괄적인 설명, 디개싱 팁, 추천 추출 방식 등을 기록하세요."
-              className="w-full bg-black/60 border border-white/10 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/50 transition"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
             ></textarea>
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-3 border-t border-white/10">
+          <div className="flex justify-end space-x-3 pt-3 border-t border-zinc-800">
             <button
               type="button"
               onClick={onClose}
@@ -414,7 +414,7 @@ export const BeanFormModal: React.FC<BeanFormModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] font-extrabold text-xs rounded-xl shadow-lg transition"
+              className="px-6 py-2.5 bg-white text-black hover:bg-zinc-200 font-extrabold text-xs rounded-xl transition"
             >
               {initialData ? '원두 수정 저장' : '원두 정보 등록'}
             </button>

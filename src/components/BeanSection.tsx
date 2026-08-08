@@ -48,12 +48,10 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
     <section className="space-y-6">
       
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#030303] via-zinc-900 to-[#030303] border border-white/20 rounded-3xl p-5 sm:p-7 shadow-2xl relative overflow-hidden backdrop-blur-xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -z-10"></div>
-        
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-7 relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/20 text-white text-xs font-semibold shadow-sm">
+            <div className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700 text-white text-xs font-semibold">
               <Package className="w-3.5 h-3.5" />
               <span>원두 인벤토리 ({totalBeans}개 보유)</span>
             </div>
@@ -67,14 +65,14 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
 
           <div className="flex items-center gap-3 shrink-0">
             {beans.length > 0 && (
-              <div className="bg-[#030303]/80 p-3 rounded-2xl border border-white/10 text-right hidden sm:block font-mono">
+              <div className="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-right hidden sm:block font-mono">
                 <div className="text-[10px] text-zinc-400 font-sans">평균 가성비 단가</div>
                 <div className="text-xs font-bold text-white">₩{avgPrice100g.toLocaleString()} / 100g</div>
               </div>
             )}
             <button
               onClick={onOpenAddModal}
-              className="px-4 py-2.5 bg-gradient-to-r from-white via-zinc-200 to-zinc-400 hover:brightness-110 text-[#030303] font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl transition flex items-center gap-2"
+              className="px-4 py-2.5 bg-white text-black hover:bg-zinc-200 font-extrabold text-xs sm:text-sm rounded-xl transition flex items-center gap-2 active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>원두 정보 추가</span>
@@ -92,7 +90,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="원두 이름, 로스터리, 원산지, 컵 노트 태그 검색..."
-            className="w-full bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 transition"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600 transition"
           />
         </div>
 
@@ -100,7 +98,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
         <select
           value={selectedRoastFilter}
           onChange={(e) => setSelectedRoastFilter(e.target.value)}
-          className="bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-white/40 font-semibold shrink-0"
+          className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-zinc-600 font-semibold shrink-0"
         >
           <option value="all">전체 배전도 보기</option>
           <option value="LIGHT Roast">LIGHT Roast</option>
@@ -116,7 +114,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
 
       {/* Bean Cards Grid */}
       {filteredBeans.length === 0 ? (
-        <div className="bg-[#030303]/60 border border-white/10 rounded-3xl p-10 text-center space-y-3 backdrop-blur-md">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 text-center space-y-3">
           <Package className="w-10 h-10 text-zinc-400 mx-auto" />
           <h3 className="text-sm font-bold text-zinc-300">등록된 원두가 없거나 검색 결과가 없습니다</h3>
           <p className="text-xs text-zinc-500 max-w-sm mx-auto">
@@ -124,7 +122,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
           </p>
           <button
             onClick={onOpenAddModal}
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/20 transition"
+            className="px-4 py-2 bg-white text-black text-xs font-bold rounded-xl hover:bg-zinc-200 transition"
           >
             + 첫 원두 추가하기
           </button>
@@ -137,17 +135,17 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
             return (
               <div
                 key={bean.id}
-                className="bg-[#030303]/80 backdrop-blur-md border border-white/10 rounded-3xl p-5 hover:border-white/30 transition duration-300 space-y-3 flex flex-col justify-between group shadow-lg relative overflow-hidden"
+                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 hover:border-zinc-700 transition duration-200 space-y-3 flex flex-col justify-between group"
               >
                 <div className="space-y-3">
                   {/* Top Row: Roastery & Roast Level Badge */}
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-white bg-white/10 px-2.5 py-1 rounded-xl border border-white/20">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-white bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700">
                       <Store className="w-3.5 h-3.5" />
                       <span>{bean.roastery}</span>
                     </div>
 
-                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-xl bg-white/10 text-white border border-white/20 flex items-center gap-1 shrink-0">
+                    <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg bg-zinc-950 text-white border border-zinc-800 flex items-center gap-1 shrink-0">
                       <Flame className="w-3 h-3 text-white" />
                       <span>Agtron {bean.agtronNumber ?? 65} ({bean.roastLevel})</span>
                     </span>
@@ -171,7 +169,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
                       {bean.flavorNotes.map((note) => (
                         <span
                           key={note}
-                          className="text-[10px] font-semibold bg-white/5 text-zinc-200 px-2 py-0.5 rounded-lg border border-white/10"
+                          className="text-[10px] font-semibold bg-zinc-950 text-zinc-200 px-2 py-0.5 rounded-md border border-zinc-800"
                         >
                           #{note}
                         </span>
@@ -181,14 +179,14 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
 
                   {/* Description / Memo */}
                   {bean.description && (
-                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed bg-black/40 p-2.5 rounded-xl border border-white/5">
+                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
                       {bean.description}
                     </p>
                   )}
                 </div>
 
                 {/* Bottom Row: Price Spec & Actions / Links */}
-                <div className="pt-3 border-t border-white/10 space-y-2.5">
+                <div className="pt-3 border-t border-zinc-800 space-y-2.5">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <div className="flex items-center gap-1 text-zinc-300">
                       <span className="text-zinc-500 text-[10px]">가격/중량:</span>
@@ -197,7 +195,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
                     </div>
 
                     {price100g > 0 && (
-                      <span className="text-[10px] text-zinc-200 bg-white/10 px-2 py-0.5 rounded border border-white/20">
+                      <span className="text-[10px] text-zinc-200 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
                         ₩{price100g.toLocaleString()}/100g
                       </span>
                     )}
@@ -210,7 +208,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
                         href={bean.purchaseUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center space-x-1.5 text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-xl transition font-bold"
+                        className="flex items-center space-x-1.5 text-xs text-white bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 px-3 py-1.5 rounded-lg transition font-bold"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         <span>구매 사이트 이동</span>
@@ -224,7 +222,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
                       <button
                         onClick={() => onOpenEditModal(bean)}
                         title="원두 정보 수정"
-                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg transition"
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition"
                       >
                         <Edit3 className="w-4 h-4" />
                       </button>
@@ -235,7 +233,7 @@ export const BeanSection: React.FC<BeanSectionProps> = ({
                           }
                         }}
                         title="원두 삭제"
-                        className="p-1.5 text-zinc-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
